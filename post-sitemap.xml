@@ -2,7 +2,7 @@
 <urlset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:image="http://www.google.com/schemas/sitemap-image/1.1" xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9 http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd http://www.google.com/schemas/sitemap-image/1.1 http://www.google.com/schemas/sitemap-image/1.1/sitemap-image.xsd" xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 	<url>
 		<loc>https://selfpublishingschool.it/</loc>
-		<lastmod>2019-09-30T16:48:08+02:00</lastmod>
+		<lastmod>2019-10-02T18:33:49+02:00</lastmod>
 	</url>
 	<url>
 		<loc>https://selfpublishingschool.it/the-money-fight-big-luca.html</loc>
@@ -650,6 +650,55 @@
 		<image:image>
 			<image:loc>https://selfpublishingschool.it/wp-content/uploads/2019/09/corso-Vinci-su-Amazon-Antonio-Vida-download.jpg</image:loc>
 			<image:caption><![CDATA[Vinci su Amazon Download]]></image:caption>
+		</image:image>
+		<image:image>
+			<image:loc>https://selfpublishingschool.it/wp-content/uploads/2019/07/contact.png</image:loc>
+		</image:image>
+	</url>
+	<url>
+		<loc>https://selfpublishingschool.it/marsigliese-paolo-serafini-download.html</loc>
+		<lastmod>2019-10-02T17:55:26+02:00</lastmod>
+		<image:image>
+			<image:loc>https://selfpublishingschool.it/wp-content/uploads/2019/10/Marsigliese-Logo-Topborsa-Download.png</image:loc>
+			<image:title><![CDATA[Marsigliese-Logo-Topborsa-Download]]></image:title>
+			<image:caption><![CDATA[MARSIGLIESE Download]]></image:caption>
+		</image:image>
+		<image:image>
+			<image:loc>https://selfpublishingschool.it/wp-content/uploads/2019/10/Marsigliese-Logo-Topborsa-Download.png</image:loc>
+			<image:caption><![CDATA[MARSIGLIESE Download
+]]></image:caption>
+		</image:image>
+		<image:image>
+			<image:loc>https://selfpublishingschool.it/wp-content/uploads/2019/07/contact.png</image:loc>
+		</image:image>
+	</url>
+	<url>
+		<loc>https://selfpublishingschool.it/flag-strategy-luca-taglialatela-download.html</loc>
+		<lastmod>2019-10-02T18:31:39+02:00</lastmod>
+		<image:image>
+			<image:loc>https://selfpublishingschool.it/wp-content/uploads/2019/10/Flag-Strategy-Luca-Taglialatela-Download-1.png</image:loc>
+			<image:title><![CDATA[Flag Strategy - Luca Taglialatela Download]]></image:title>
+			<image:caption><![CDATA[Flag Strategy - Luca Taglialatela Download]]></image:caption>
+		</image:image>
+		<image:image>
+			<image:loc>https://selfpublishingschool.it/wp-content/uploads/2019/10/Flag-Strategy-Luca-Taglialatela-Download-1.png</image:loc>
+			<image:caption><![CDATA[Flag Strategy - Luca Taglialatela Download]]></image:caption>
+		</image:image>
+		<image:image>
+			<image:loc>https://selfpublishingschool.it/wp-content/uploads/2019/10/Flag-Strategy-Luca-Taglialatela-Download-1.png</image:loc>
+			<image:caption><![CDATA[Flag Strategy - Luca Taglialatela Download]]></image:caption>
+		</image:image>
+	</url>
+	<url>
+		<loc>https://selfpublishingschool.it/corso-massima-rendita-luca-lixi-download.html</loc>
+		<lastmod>2019-10-02T18:33:49+02:00</lastmod>
+		<image:image>
+			<image:loc>https://selfpublishingschool.it/wp-content/uploads/2019/10/Massima-Rendita-Download.png</image:loc>
+			<image:title><![CDATA[Massima-Rendita-Download]]></image:title>
+		</image:image>
+		<image:image>
+			<image:loc>https://selfpublishingschool.it/wp-content/uploads/2019/10/Massima-Rendita-Download.png</image:loc>
+			<image:caption><![CDATA[Corso Massima Rendita - Luca Lixi Download]]></image:caption>
 		</image:image>
 		<image:image>
 			<image:loc>https://selfpublishingschool.it/wp-content/uploads/2019/07/contact.png</image:loc>
