@@ -1,25 +1,15 @@
-import { createElement, Component, Fragment } from '@wordpress/element'
-import PropTypes from 'prop-types'
+import {
+	createElement,
+	Component,
+	Fragment,
+	createRef
+} from '@wordpress/element'
 import cls from 'classnames'
-
-import { forbidExtraProps } from 'airbnb-prop-types'
-import { addEventListener } from 'consolidated-events'
-import objectValues from 'object.values'
-
-import contains from 'document.contains'
 
 const DISPLAY = {
 	BLOCK: 'block',
 	FLEX: 'flex',
 	INLINE_BLOCK: 'inline-block'
-}
-
-const propTypes = {
-	children: PropTypes.node.isRequired,
-	onOutsideClick: PropTypes.func.isRequired,
-	disabled: PropTypes.bool,
-	useCapture: PropTypes.bool,
-	display: PropTypes.oneOf(objectValues(DISPLAY))
 }
 
 const defaultProps = {
@@ -31,23 +21,42 @@ const defaultProps = {
 	display: DISPLAY.BLOCK
 }
 
-export default class OutsideClickHandler extends Component {
-	constructor(...args) {
-		super(...args)
-
-		this.onMouseDown = this.onMouseDown.bind(this)
-		this.onMouseUp = this.onMouseUp.bind(this)
-		this.setChildNodeRef = this.setChildNodeRef.bind(this)
+const updateRef = (ref, instance) => {
+	if (typeof ref === 'function') {
+		ref(instance)
+	} else {
+		ref.current = instance
 	}
+}
 
+export default class OutsideClickHandler extends Component {
 	componentDidMount() {
 		const { disabled, useCapture } = this.props
 
 		if (!disabled) this.addMouseDownEventListener(useCapture)
 	}
 
+	childNode = createRef()
+
+	checkIsInside = event =>
+		[this.childNode, ...(this.props.additionalRefs || [])].reduce(
+			(isInside, currentRef) => {
+				if (isInside) {
+					return isInside
+				}
+
+				if (!currentRef || !currentRef.current) {
+					return isInside
+				}
+
+				return currentRef.current.contains(event.target)
+			},
+			false
+		)
+
 	componentWillReceiveProps({ disabled, useCapture }) {
 		const { disabled: prevDisabled } = this.props
+
 		if (prevDisabled !== disabled) {
 			if (disabled) {
 				this.removeEventListeners()
@@ -64,58 +73,61 @@ export default class OutsideClickHandler extends Component {
 	// Use mousedown/mouseup to enforce that clicks remain outside the root's
 	// descendant tree, even when dragged. This should also get triggered on
 	// touch devices.
-	onMouseDown(e) {
+	onMouseDown = e => {
 		const { useCapture } = this.props
 
-		const isDescendantOfRoot =
-			this.childNode && contains(this.childNode, e.target)
-
-		if (!isDescendantOfRoot) {
+		if (!this.checkIsInside(e)) {
 			if (this.removeMouseUp) {
 				this.removeMouseUp()
 				this.removeMouseUp = null
 			}
-			this.removeMouseUp = addEventListener(
-				document,
-				'mouseup',
-				this.onMouseUp,
-				{ capture: useCapture }
-			)
+
+			document.addEventListener('mouseup', this.onMouseUp, useCapture)
+
+			this.removeMouseUp = () => {
+				document.removeEventListener(
+					'mouseup',
+					this.onMouseUp,
+					useCapture
+				)
+			}
 		}
 	}
 
 	// Use mousedown/mouseup to enforce that clicks remain outside the root's
 	// descendant tree, even when dragged. This should also get triggered on
 	// touch devices.
-	onMouseUp(e) {
+	onMouseUp = e => {
 		const { onOutsideClick } = this.props
 
-		const isDescendantOfRoot =
-			this.childNode && contains(this.childNode, e.target)
 		if (this.removeMouseUp) {
 			this.removeMouseUp()
 			this.removeMouseUp = null
 		}
 
-		if (!isDescendantOfRoot) {
+		if (!this.checkIsInside(e)) {
 			onOutsideClick(e)
 		}
 	}
 
-	setChildNodeRef(ref) {
+	setChildNodeRef = ref => {
 		if (this.props.wrapperProps && this.props.wrapperProps.ref) {
 			this.props.wrapperProps.ref(ref)
 		}
-		this.childNode = ref
+
+		updateRef(this.childNode, ref)
 	}
 
 	addMouseDownEventListener(useCapture) {
-		this.removeMouseDown = addEventListener(
-			document,
-			'mousedown',
-			this.onMouseDown,
-			{ capture: useCapture }
-		)
+		document.addEventListener('mousedown', this.onMouseDown, useCapture)
+
+		this.removeMouseDown = () => {
+			document.removeEventListener(
+				'mousedown',
+				this.onMouseDown,
+				useCapture
+			)
+		}
 	}
 
 	removeEventListeners() {
@@ -137,5 +149,4 @@ export default class OutsideClickHandler extends Component {
 	}
 }
 
-// OutsideClickHandler.propTypes = propTypes
 OutsideClickHandler.defaultProps = defaultProps

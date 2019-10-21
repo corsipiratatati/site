@@ -102,7 +102,7 @@ const showOffcanvas = settings => {
 			{ once: true }
 		)
 
-	enable()
+	disable(settings.container.querySelector('.content-container'))
 }
 
 const hideOffcanvas = settings => {
@@ -128,6 +128,7 @@ const hideOffcanvas = settings => {
 			setTimeout(() => {
 				document.body.removeAttribute('data-panel')
 				ctEvents.trigger('ct:modal:closed', settings.container)
+				enable(settings.container.querySelector('.content-container'))
 			}, 300)
 		},
 		{ once: true }
@@ -142,8 +143,6 @@ const hideOffcanvas = settings => {
 	}
 
 	settings.onClose()
-
-	disable()
 }
 
 export const handleClick = (e, settings) => {

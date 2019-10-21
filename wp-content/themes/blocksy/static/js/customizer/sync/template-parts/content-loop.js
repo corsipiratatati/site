@@ -357,19 +357,20 @@ const getVariablesForPrefix = prefix => ({
 
 	[`${prefix}_cardTitleColor`]: [
 		{
-			selector: '.entry-title',
-			variable: 'linkInitialColor',
+			selector: '.entry-card .entry-title',
+			variable: 'color',
 			type: 'color:default'
 		},
 
 		{
-			selector: '.entry-title',
-			variable: 'linkHoverColor',
+			selector: '.entry-card .entry-title',
+			variable: 'colorHover',
 			type: 'color:hover'
 		}
 	],
 
 	[`${prefix}_cardExcerptSize`]: {
+		selector: '.entry-excerpt',
 		variable: 'cardExcerptSize',
 		responsive: true,
 		unit: 'px'
@@ -377,7 +378,7 @@ const getVariablesForPrefix = prefix => ({
 
 	[`${prefix}_cardExcerptColor`]: {
 		selector: '.entry-excerpt',
-		variable: 'cardExcerptColor',
+		variable: 'color',
 		type: 'color'
 	},
 
@@ -389,13 +390,13 @@ const getVariablesForPrefix = prefix => ({
 	[`${prefix}_cardMetaColor`]: [
 		{
 			selector: '.entry-meta',
-			variable: 'linkInitialColor',
+			variable: 'color',
 			type: 'color:default'
 		},
 
 		{
 			selector: '.entry-meta',
-			variable: 'linkHoverColor',
+			variable: 'colorHover',
 			type: 'color:hover'
 		}
 	],
@@ -429,6 +430,7 @@ const getVariablesForPrefix = prefix => ({
 	],
 
 	[`${prefix}_cardBackground`]: {
+		selector: '[data-cards="boxed"] .entry-card',
 		variable: 'cardBackground',
 		type: 'color'
 	},
@@ -440,15 +442,24 @@ const getVariablesForPrefix = prefix => ({
 	},
 
 	[`${prefix}_cardsGap`]: {
+		selector: '.entries',
 		variable: 'cardsGap',
 		responsive: true,
 		unit: 'px'
 	},
 
 	[`${prefix}_card_spacing`]: {
+		selector: '[data-cards="boxed"] .entry-card',
 		variable: 'cardSpacing',
 		responsive: true,
 		unit: 'px'
+	},
+
+	[`${prefix}_cardShadow`]: {
+		selector: '[data-cards="boxed"] .entry-card',
+		type: 'box-shadow',
+		variable: 'boxShadow',
+		responsive: true
 	},
 
 	[`${prefix}_archive_order`]: {

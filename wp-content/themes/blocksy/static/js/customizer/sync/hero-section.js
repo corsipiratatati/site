@@ -418,7 +418,8 @@ export const renderHeroSectionTexts = prefix => {
 
 const getVariablesForPrefix = prefix => ({
 	[`${prefix}_hero_height`]: {
-		variable: 'pageTitleMinHeight',
+		selector: '.hero-section[data-type="type-2"]',
+		variable: 'minHeight',
 		responsive: true,
 		unit: ''
 	},
@@ -429,8 +430,8 @@ const getVariablesForPrefix = prefix => ({
 	}),
 
 	[`${prefix}_pageTitleFontColor`]: {
-		selector: '.entry-header',
-		variable: 'initialColor',
+		selector: '.entry-header .page-title',
+		variable: 'color',
 		type: 'color'
 	},
 
@@ -442,25 +443,36 @@ const getVariablesForPrefix = prefix => ({
 	[`${prefix}_pageMetaFontColor`]: [
 		{
 			selector: '.entry-header .entry-meta',
-			variable: 'initialColor',
+			variable: 'color',
 			type: 'color:default'
 		},
 
 		{
 			selector: '.entry-header .entry-meta',
-			variable: 'hoverColor',
+			variable: 'colorHover',
 			type: 'color:hover'
 		}
 	],
 
+	...typographyOption({
+		id: `${prefix}_pageExcerptFont`,
+		selector: '.entry-header .page-description'
+	}),
+
+	[`${prefix}_pageExcerptColor`]: {
+		selector: '.entry-header .page-description',
+		variable: 'color',
+		type: 'color'
+	},
+
 	[`${prefix}_pageTitleOverlay`]: {
-		selector: ':root',
+		selector: '.hero-section[data-type="type-2"]',
 		variable: 'pageTitleOverlay',
 		type: 'color'
 	},
 
 	[`${prefix}_pageTitleBackground`]: {
-		selector: ':root',
+		selector: '.hero-section[data-type="type-2"]',
 		variable: 'pageTitleBackground',
 		type: 'color'
 	}

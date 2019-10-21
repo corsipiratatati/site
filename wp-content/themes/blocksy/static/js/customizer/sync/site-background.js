@@ -3,6 +3,11 @@ wp.customize('paginationDivider', val =>
 		[...document.querySelectorAll('.ct-pagination')].map(el => {
 			el.removeAttribute('data-divider')
 			if (to.style === 'none') return
+			if (
+				wp.customize('pagination_global_type')() === 'infinite_scroll'
+			) {
+				return
+			}
 			el.dataset.divider = ''
 		})
 	)

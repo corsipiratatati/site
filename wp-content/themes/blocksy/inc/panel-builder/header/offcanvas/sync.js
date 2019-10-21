@@ -9,7 +9,14 @@ ctEvents.on(
 			...handleBackgroundOptionFor({
 				id: 'offcanvasBackground',
 				selector: '#offcanvas'
-			})
+			}),
+
+			headerPanelShadow: {
+				selector: '[data-behaviour*="side"]',
+				type: 'box-shadow',
+				variable: 'boxShadow',
+				responsive: true
+			}
 		}
 	}
 )
@@ -43,12 +50,19 @@ ctEvents.on(
 
 			setTimeout(() => {
 				el.removeAttribute('data-behaviour')
+				el.classList.add('ct-no-transition')
 
-				el.dataset.behaviour =
-					values.offcanvas_behavior === 'modal'
-						? 'modal'
-						: `${values.side_panel_position}-side`
-			}, 1000)
+				requestAnimationFrame(() => {
+					el.dataset.behaviour =
+						values.offcanvas_behavior === 'modal'
+							? 'modal'
+							: `${values.side_panel_position}-side`
+
+					setTimeout(() => {
+						el.classList.remove('ct-no-transition')
+					})
+				})
+			}, 300)
 		}
 	}
 )

@@ -262,9 +262,11 @@ export const replaceArticleAndRemoveParts = () => {
 				el.dataset.count = count
 			}
 		})
+
+		ctEvents.trigger('ct:single:share-box:update')
 	}
 
-	if ((wp.customize('has_author_box')() || 'no') === 'yes') {
+	if ((wp.customize('has_author_box')() || 'no') !== 'yes') {
 		const authorBox = document.querySelector(
 			'.site-main .content-area article .author-box'
 		)
@@ -351,6 +353,7 @@ export const replaceArticleAndRemoveParts = () => {
 		)
 
 		image && image.classList.remove('alignwide')
+		image && image.classList.remove('ct-boundless')
 
 		if (
 			getSidebarTypeFor(wp.customize('single_page_structure')()) ===
@@ -360,6 +363,14 @@ export const replaceArticleAndRemoveParts = () => {
 			if (wp.customize('single_featured_image_width')() === 'wide') {
 				image.classList.add('alignwide')
 			}
+		}
+
+		if (
+			(wp.customize('single_content_style')() || 'wide') === 'boxed' &&
+			(wp.customize('single_featured_image_boundless')() || 'no') ===
+				'yes'
+		) {
+			image.classList.add('ct-boundless')
 		}
 
 		if (wp.customize('single_featured_image_location')() === 'below') {
@@ -502,6 +513,10 @@ wp.customize('single_featured_image_location', val =>
 )
 
 wp.customize('single_content_style', val =>
+	val.bind(to => replaceArticleAndRemoveParts())
+)
+
+wp.customize('single_featured_image_boundless', val =>
 	val.bind(to => replaceArticleAndRemoveParts())
 )
 

@@ -38,12 +38,14 @@ onDocumentLoaded(() => {
 
 		{
 			els: '.ct-back-to-top',
-			load: () => import('./frontend/back-to-top-link')
+			load: () => import('./frontend/back-to-top-link'),
+			events: ['ct:back-to-top:mount']
 		},
 
 		{
 			els: '.share-box[data-type="type-2"]',
-			load: () => import('./frontend/share-box')
+			load: () => import('./frontend/share-box'),
+			events: ['ct:single:share-box:update']
 		},
 
 		{
@@ -194,39 +196,11 @@ const initOverlayTrigger = () => {
 							document.querySelector('.mobile-menu-toggle').hash
 						),
 						onClose: () =>
+							document.querySelector('.mobile-menu-toggle') &&
 							document
 								.querySelector('.mobile-menu-toggle')
 								.firstElementChild.classList.remove('close')
 					})
-				)
-
-				return
-
-				if (document.querySelector('.side-panel')) {
-					import('./frontend/overlay').then(({ handleClick }) =>
-						handleClick(event)
-					)
-					return
-				}
-
-				import('./frontend/search-overlay').then(({ handleClick }) =>
-					handleClick(
-						event,
-						document.querySelector('.mobile-menu-toggle'),
-						{
-							modalTarget: document.querySelector(
-								'.mobile-menu-toggle'
-							).hash,
-							onClose: () => {
-								document.querySelector('.mobile-menu-toggle') &&
-									document
-										.querySelector('.mobile-menu-toggle')
-										.firstElementChild.classList.remove(
-											'close'
-										)
-							}
-						}
-					)
 				)
 			})
 }

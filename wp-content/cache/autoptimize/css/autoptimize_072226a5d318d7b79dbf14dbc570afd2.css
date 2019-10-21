@@ -1,0 +1,31 @@
+[data-row=bottom] {--height: 80px;}
+.ct-header-cta {--buttoninitialcolor: var(--paletteColor1);--buttontextinitialcolor: #fff;--buttontexthovercolor: #fff;--buttonhovercolor: var(--paletteColor2);}
+.ct-header-cart i {--iconsize: 15px;}
+.ct-header-cart>a {--linkinitialcolor: var(--paletteColor3);--linkhovercolor: var(--paletteColor1);}
+.ct-header-cart {--cartbadgetext: #fff;--cartbadgebackground: var(--paletteColor1);}
+.custom-logo-link {--maxheight: 50px;}
+.site-title {--linkinitialcolor: var(--paletteColor4);--lineheight: 1.65;--fontsize: 25px;--letterspacing: 0em;--linkhovercolor: var(--paletteColor1);}
+.site-description {--letterspacing: 0em;--fontsize: 12px;--lineheight: 1.65;--fontcolor: var(--paletteColor3);}
+[data-row=middle] {--height: 70px;}
+.mobile-menu {--lineheight: 1.65;--fontsize: 23px;--letterspacing: 0em;}
+.ct-header-search {--linkhovercolor: var(--paletteColor1);--iconsize: 15px;--linkinitialcolor: var(--paletteColor3);}
+.ct-header-socials {--backgroundcolorhover: var(--paletteColor1);--linkhovercolor: var(--paletteColor1);--spacing: 10px;--iconsize: 12px;--linkinitialcolor: var(--paletteColor3);}
+.ct-header-text {--letterspacing: 0em;--fontsize: 15px;--maxwidth: 100%;--lineheight: 1.3;}
+[data-row=top] {--height: 50px;}
+:root {--copyrightspacing: 15px;--widgetareaspacing: 40px;--pagecontentboxedspacing: 40px;--bottomshareboxspacing: 30px;--postnavspacing: 40px;--paginationspacing: 50px;--sidebarwidgetsspacing: 30px;--cardspacing: 25px;--cardexcerptsize: 16px;--lineheight: 1.65;--fontsize: 17px;--letterspacing: 0em;--cardsgap: 30px;--contentareaspacing: 50px;--sidebarinnerspacing: 35px;--relatedpostscontainerspacing: 30px;--topshareboxspacing: 30px;--singlecontentboxedspacing: 40px;--singleauthorboxspacing: 40px;--footerprimaryspacing: 30px;--passepartoutsize: 0px;}
+h1 {--lineheight: 1.5;--fontsize: 40px;--letterspacing: 0em;}
+h2 {--lineheight: 1.5;--fontsize: 35px;--letterspacing: 0em;}
+h3 {--lineheight: 1.5;--fontsize: 30px;--letterspacing: 0em;}
+h4 {--lineheight: 1.5;--fontsize: 25px;--letterspacing: 0em;}
+h5 {--lineheight: 1.5;--fontsize: 20px;--letterspacing: 0em;}
+h6 {--lineheight: 1.5;--fontsize: 16px;--letterspacing: 0em;}
+.entry-content blockquote p, .ct-quote-widget blockquote p {--lineheight: 1.65;--fontsize: 25px;--letterspacing: 0em;}
+code, kbd, samp, pre {--lineheight: 1.65;--fontsize: 16px;--letterspacing: 0em;}
+.ct-sidebar .widget-title {--lineheight: 1.65;--fontsize: 18px;--letterspacing: 0em;}
+.ct-sidebar .ct-post-title {--lineheight: 1.4;--fontsize: 15px;--letterspacing: 0em;}
+.product_title {--lineheight: 1.4;--fontsize: 30px;--letterspacing: 0em;}
+.entry-card .entry-title {--lineheight: 1.3;--fontsize: 18px;--letterspacing: 0em;}
+.footer-menu {--menuitemsspacing: 20px;}
+[data-row=bottom][data-border]>div:before, [data-row=bottom][data-border]>div:after, [data-row=middle][data-border]>div:before, [data-row=middle][data-border]>div:after, [data-row=top][data-border]>div:before, [data-row=top][data-border]>div:after {--border: none;}
+.header-menu-1 ul, .header-menu-2 ul, .entry-card .entry-meta {--lineheight: 1.3;--fontsize: 12px;--letterspacing: 0em;}
+.header-menu-1 .sub-menu, .header-menu-2 .sub-menu {--letterspacing: 0em;--fontsize: 12px;--lineheight: 1.6;--borderradius: 2px;}

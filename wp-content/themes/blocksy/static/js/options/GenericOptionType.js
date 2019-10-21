@@ -309,6 +309,22 @@ class GenericOptionType extends Component {
 				? 'block'
 				: renderingConfig.design
 
+		if (renderingConfig.design === 'compact') {
+			return (
+				<section>
+					{maybeLabel && <label>{maybeLabel}</label>}
+
+					{((option.responsive &&
+						isOptionEnabledFor(
+							this.state.device,
+							option.responsive
+						)) ||
+						!option.responsive) &&
+						OptionComponentWithoutDesign}
+				</section>
+			)
+		}
+
 		// if (purpose === 'customizer') {
 		const getActualOption = ({
 			wrapperAttr: { className, ...additionalWrapperAttr } = {},
@@ -408,6 +424,8 @@ class GenericOptionType extends Component {
 							{OptionComponentWithoutDesign}
 						</section>
 
+						<ControlEnd />
+
 						{maybeDesc && (
 							<div
 								dangerouslySetInnerHTML={{
@@ -418,8 +436,6 @@ class GenericOptionType extends Component {
 						)}
 					</Fragment>
 				)}
-
-				<ControlEnd />
 			</div>
 		)
 
