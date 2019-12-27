@@ -16,43 +16,32 @@ export let rel = new Rellax()
  * inside rellax.js is very coupled for doing that trick.
  */
 
-const init = () =>
-	[...document.querySelectorAll('[data-parallax]')].map(elWithParallax => {
-		// Consider here storing the rellax instance onto the section DOM
-		// element itself. And do that in a non-leaking fashion.
-		//
-		// section.rellaxInstance would leak memory
-		if (elWithParallax.ctHasParallax) return
+export const mount = elWithParallax => {
+	// Consider here storing the rellax instance onto the section DOM
+	// element itself. And do that in a non-leaking fashion.
+	//
+	// section.rellaxInstance would leak memory
+	if (elWithParallax.ctHasParallax) return
 
-		elWithParallax.ctHasParallax = true
+	elWithParallax.ctHasParallax = true
 
-		if (elWithParallax.querySelector('.ct-image-container > img')) {
-			setTimeout(() => {
-				rel.addEl({
-					el: elWithParallax.querySelector(
-						'.ct-image-container > img'
-					),
-					// +elWithParallax.dataset.parallaxSpeed,
-					speed: -5,
-					fitInsideContainer: elWithParallax,
-					...(elWithParallax.dataset.parallax
-						? { parallaxBehavior: elWithParallax.dataset.parallax }
-						: {}),
-				})
-			}, 0)
-		} else {
+	if (elWithParallax.querySelector('.ct-image-container > img')) {
+		setTimeout(() => {
 			rel.addEl({
-				el: elWithParallax,
-				speed: +elWithParallax.dataset.parallax,
-				shouldSetHeightToIncrease: false
+				el: elWithParallax.querySelector('.ct-image-container > img'),
+				// +elWithParallax.dataset.parallaxSpeed,
+				speed: -5,
+				fitInsideContainer: elWithParallax,
+				...(elWithParallax.dataset.parallax
+					? { parallaxBehavior: elWithParallax.dataset.parallax }
+					: {})
 			})
-		}
-	})
-
-onDocumentLoaded(() => {
-	init()
-
-	window.ctEvents.on('blocksy:parallax:init', () => {
-		init()
-	})
-})
+		}, 0)
+	} else {
+		rel.addEl({
+			el: elWithParallax,
+			speed: +elWithParallax.dataset.parallax,
+			shouldSetHeightToIncrease: false
+		})
+	}
+}

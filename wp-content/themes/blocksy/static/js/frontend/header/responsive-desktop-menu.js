@@ -1,4 +1,3 @@
-import { handleSingleSubmenu } from './menu'
 let cacheInfo = {}
 
 ctEvents.on('ct:header:update', () => (cacheInfo = {}))
@@ -144,7 +143,11 @@ const maybeCreateMoreItemsFor = nav => {
 
 	nav.firstElementChild.appendChild(moreContainer)
 
-	handleSingleSubmenu(nav.querySelector('.more-items-container > .sub-menu'))
+	import('./menu').then(({ handleSingleSubmenu }) =>
+		handleSingleSubmenu(
+			nav.querySelector('.more-items-container > .sub-menu')
+		)
+	)
 }
 
 const computeItemsWidth = nav =>

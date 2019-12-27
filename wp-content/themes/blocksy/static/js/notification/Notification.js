@@ -7,6 +7,7 @@ import {
   useRef
 } from '@wordpress/element'
 import { __, sprintf } from 'ct-i18n'
+import $ from 'jquery'
 
 const Notification = ({ initialStatus, url, pluginUrl, pluginLink }) => {
   const [pluginStatus, setPluginStatus] = useState('installed')
@@ -99,7 +100,7 @@ const Notification = ({ initialStatus, url, pluginUrl, pluginLink }) => {
                 })
               }}>
 
-              
+
               {isLoading
                 ? __('Activating...', 'blocksy')
                 : pluginStatus === 'uninstalled'

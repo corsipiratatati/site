@@ -54,7 +54,7 @@ export default class OutsideClickHandler extends Component {
 			false
 		)
 
-	componentWillReceiveProps({ disabled, useCapture }) {
+	UNSAFE_componentWillReceiveProps({ disabled, useCapture }) {
 		const { disabled: prevDisabled } = this.props
 
 		if (prevDisabled !== disabled) {

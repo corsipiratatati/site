@@ -71,7 +71,7 @@ export const mountRenderHeaderLoop = () => {
 		return
 	}
 
-	if (wp && wp.customize && wp.customize.selectiveRefresh) {
+	if (window.wp && wp && wp.customize && wp.customize.selectiveRefresh) {
 		wp.customize.selectiveRefresh.bind('render-partials-response', e => {
 			let idToLookInto = {}
 

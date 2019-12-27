@@ -1,5 +1,13 @@
 import WebFontLoader from 'webfontloader'
 
+const withPrefix = (value, prefix = '') => {
+	if (prefix.trim() === '') {
+		return value
+	}
+
+	return `${prefix}${value.charAt(0).toUpperCase()}${value.slice(1)}`
+}
+
 const getWeightFor = ({ variation }) => {
 	if (variation === 'Default') {
 		return 'CT_CSS_SKIP_RULE'
@@ -73,10 +81,10 @@ const loadGoogleFonts = (font_family, variation) => {
 	})
 }
 
-export const typographyOption = ({ id, selector }) => ({
+export const typographyOption = ({ id, selector, prefix = '' }) => ({
 	[id]: [
 		{
-			variable: 'fontFamily',
+			variable: withPrefix('fontFamily', prefix),
 			selector,
 			extractValue: value => {
 				if (value.family === 'Default') {
@@ -92,7 +100,7 @@ export const typographyOption = ({ id, selector }) => ({
 		},
 
 		{
-			variable: 'fontWeight',
+			variable: withPrefix('fontWeight', prefix),
 			selector,
 			extractValue: getWeightFor,
 			whenDone: (extractedValue, { family, variation }) =>
@@ -100,7 +108,7 @@ export const typographyOption = ({ id, selector }) => ({
 		},
 
 		{
-			variable: 'fontStyle',
+			variable: withPrefix('fontStyle', prefix),
 			selector,
 			extractValue: getStyleFor,
 
@@ -109,19 +117,19 @@ export const typographyOption = ({ id, selector }) => ({
 		},
 
 		{
-			variable: 'textTransform',
+			variable: withPrefix('textTransform', prefix),
 			selector,
 			extractValue: value => value['text-transform']
 		},
 
 		{
-			variable: 'textDecoration',
+			variable: withPrefix('textDecoration', prefix),
 			selector,
 			extractValue: value => value['text-decoration']
 		},
 
 		{
-			variable: 'fontSize',
+			variable: withPrefix('fontSize', prefix),
 			selector,
 			unit: '',
 			responsive: true,
@@ -129,7 +137,7 @@ export const typographyOption = ({ id, selector }) => ({
 		},
 
 		{
-			variable: 'lineHeight',
+			variable: withPrefix('lineHeight', prefix),
 			selector,
 			unit: '',
 			responsive: true,
@@ -137,7 +145,7 @@ export const typographyOption = ({ id, selector }) => ({
 		},
 
 		{
-			variable: 'letterSpacing',
+			variable: withPrefix('letterSpacing', prefix),
 			selector,
 			unit: '',
 			responsive: true,
@@ -183,6 +191,12 @@ export const getTypographyVariablesFor = () => ({
 	}),
 
 	...typographyOption({
+		id: 'buttons',
+		selector: ':root',
+		prefix: 'button'
+	}),
+
+	...typographyOption({
 		id: 'blockquote',
 		selector: '.entry-content blockquote p, .ct-quote-widget blockquote p'
 	}),
@@ -204,6 +218,7 @@ export const getTypographyVariablesFor = () => ({
 
 	...typographyOption({
 		id: 'cardProductTitleFont',
-		selector: '.woocommerce-loop-product__title'
+		selector:
+			'.woocommerce-loop-product__title, .woocommerce-loop-category__title'
 	})
 })

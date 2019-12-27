@@ -56,6 +56,8 @@ export const defineCustomizerControl = (type, Component) =>
 
 			wp.customize.Control.prototype.initialize.call(control, id, params)
 
+			control.container[0].classList.remove('customize-control')
+
 			// The following should be eliminated with <https://core.trac.wordpress.org/ticket/31334>.
 			function onRemoved(removedControl) {
 				if (control === removedControl) {

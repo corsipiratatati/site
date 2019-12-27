@@ -3,8 +3,27 @@ import { maybeTransformUnorderedChoices } from '../helpers/parse-choices.js'
 import Downshift from 'downshift'
 import classnames from 'classnames'
 
-const Select = ({ value, option: { choices, placeholder }, onChange }) => {
-	const orderedChoices = maybeTransformUnorderedChoices(choices)
+const Select = ({
+	value,
+	option: { choices, tabletChoices, mobileChoices, placeholder },
+	onChange,
+	device = 'desktop'
+}) => {
+	let deviceChoices = choices
+
+	if (device === 'tablet' && tabletChoices) {
+		deviceChoices = tabletChoices
+	}
+
+	if (device === 'mobile' && mobileChoices) {
+		deviceChoices = mobileChoices
+	}
+
+	const orderedChoices = maybeTransformUnorderedChoices(deviceChoices)
+
+	if (orderedChoices.length === 0) {
+		return null
+	}
 
 	return (
 		<Downshift

@@ -5,11 +5,11 @@ ctEvents.on(
 	'ct:header:sync:collect-variable-descriptors',
 	variableDescriptors => {
 		variableDescriptors['top-row'] = handleRowVariables({
-			selector: '[data-row="top"]'
+			selector: 'header [data-row="top"]'
 		})
 	}
 )
 
 ctEvents.on('ct:header:sync:item:top-row', changeDescriptor =>
-	handleRowOptions({ selector: '[data-row="top"]', changeDescriptor })
+	handleRowOptions({ selector: 'header [data-row="top"]', changeDescriptor })
 )

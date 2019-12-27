@@ -13,17 +13,21 @@ const buildersMaps = {
 }
 
 const openBuilderFor = key => {
-	if (key !== 'header') {
-		return
-	}
+	document.querySelector('.ct-panel-builder').dataset.builder =
+		buildersMaps[key].panelType
 
 	document.querySelector('.wp-full-overlay').classList.add('ct-show-builder')
+
+	if (buildersMaps[key].panelType === 'footer') {
+		document.body.classList.add('ct-footer-builder')
+	}
 }
 
 const closeBuilderFor = key => {
 	document
 		.querySelector('.wp-full-overlay')
 		.classList.remove('ct-show-builder')
+	document.body.classList.remove('ct-footer-builder')
 }
 
 export const initBuilder = () => {

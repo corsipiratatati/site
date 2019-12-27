@@ -101,8 +101,15 @@ const getEnabledKey = () => {
 	return false
 }
 
-export const getOptionFor = (key, prefix = '') =>
-	wp.customize(`${prefix}${prefix.length > 0 ? '_' : ''}${key}`)()
+export const getOptionFor = (key, prefix = '') => {
+	const id = `${prefix}${prefix.length > 0 ? '_' : ''}${key}`
+
+	if (wp.customize(id)) {
+		return wp.customize(id)()
+	}
+
+	return false
+}
 
 export const renderHeroSection = prefix => {
 	if (prefix !== getPrefixFor()) {
@@ -328,14 +335,30 @@ export const renderHeroSection = prefix => {
 			].map(label => label.remove())
 		}
 
+		if (getOptionFor('has_meta_avatar', prefix) === 'no') {
+			;[
+				...document.querySelectorAll(
+					'.hero-section .entry-meta .avatar-container'
+				)
+			].map(el => {
+				el.parentNode.classList.remove('has-avatar')
+				el.remove()
+			})
+		}
+
 		;[
 			...document.querySelectorAll(
-				'.hero-section .entry-meta .ct-meta-date .ct-meta-element',
+				'.hero-section .entry-meta .ct-meta-date .ct-meta-element'
+			),
+			...document.querySelectorAll(
 				'.hero-section .entry-meta .ct-meta-updated-date .ct-meta-element'
 			)
 		].map(dateEl => {
 			dateEl.innerHTML = window.wp.date.format(
-				getOptionFor('single_meta_date_format', prefix) || 'M j, Y',
+				getOptionFor('date_format_source', prefix) === 'default'
+					? dateEl.dataset.defaultFormat
+					: getOptionFor('single_meta_date_format', prefix) ||
+							'M j, Y',
 				moment(dateEl.dataset.date)
 			)
 		})
@@ -487,7 +510,9 @@ const watchOptionsFor = prefix => {
 		`${prefix}_hero_alignment2`,
 		`${prefix}_hero_section`,
 		`${prefix}_has_meta_label`,
+		`${prefix}_has_meta_avatar`,
 		`${prefix}_single_meta_date_format`,
+		`${prefix}_date_format_source`,
 		`${prefix}_single_meta_elements`,
 		// `${prefix}_custom_title`,
 		// `${prefix}_custom_description`,

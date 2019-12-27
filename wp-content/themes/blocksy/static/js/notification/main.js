@@ -1,5 +1,6 @@
 import { createElement, render } from '@wordpress/element'
 import Notification from './Notification'
+import $ from 'jquery'
 
 export const mount = el => {
 	if (el.querySelector('.notice-blocksy-plugin-root')) {
@@ -27,15 +28,6 @@ export const mount = el => {
 	;[...document.querySelectorAll('[data-dismiss]')].map(el => {
 		el.addEventListener('click', e => {
 			e.preventDefault()
-
-			el.closest('.notice-footer-builder').remove()
-
-			$.ajax(ajaxurl, {
-				type: 'POST',
-				data: {
-					action: 'blocksy_dismissed_notice_footer_builder'
-				}
-			})
 		})
 	})
 }

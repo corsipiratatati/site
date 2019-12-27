@@ -1,6 +1,7 @@
 import { createElement, render } from '@wordpress/element'
 import OptionsRoot from './OptionsRoot.js'
 import { getValueFromInput } from './helpers/get-value-from-input'
+import $ from 'jquery'
 
 export const initAllPanels = () =>
 	[...document.querySelectorAll('.ct-options-panel')].map(singleTarget => {

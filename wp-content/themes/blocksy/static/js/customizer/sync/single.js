@@ -534,6 +534,13 @@ wp.customize('page_content_style', val =>
 
 wp.customize('has_post_comments', val =>
 	val.bind(to => {
+		if (
+			!document.body.classList.contains('single') &&
+			!document.body.classList.contains('page')
+		) {
+			return
+		}
+
 		const comments = document.querySelector(
 			'.site-main .ct-comments-container'
 		)
@@ -612,15 +619,24 @@ const refreshRelatedPosts = (shouldInsert = true) => {
 		}
 	}
 
+	console.log(
+		document.querySelector('.site-main .ct-related-posts ul').children
+			.length
+	)
+
 	Array.from(
 		new Array(8 - parseInt(wp.customize('related_posts_count')() || 8, 10))
-	).map(() =>
-		document
-			.querySelector('.site-main .ct-related-posts ul')
-			.removeChild(
-				document.querySelector('.site-main .ct-related-posts ul')
-					.lastElementChild
-			)
+	).map(
+		() =>
+			document.querySelector('.site-main .ct-related-posts ul').children
+				.length >
+				parseInt(wp.customize('related_posts_count')() || 8, 10) &&
+			document
+				.querySelector('.site-main .ct-related-posts ul')
+				.removeChild(
+					document.querySelector('.site-main .ct-related-posts ul')
+						.lastElementChild
+				)
 	)
 
 	document.querySelector('.site-main .ct-related-posts ul').dataset.columns =
@@ -630,10 +646,85 @@ const refreshRelatedPosts = (shouldInsert = true) => {
 		'.site-main .ct-related-posts .ct-related-posts-label'
 	).innerHTML = wp.customize('related_label')()
 
+	const metaElements = wp.customize('related_meta_elements')()
+
+	if (!metaElements.author) {
+		;[
+			...document.querySelectorAll(
+				'.site-main .ct-related-posts .entry-meta .avatar-container'
+			)
+		].map(el => {
+			el.parentNode.classList.remove('has-avatar')
+			el.remove()
+		})
+		;[
+			...document.querySelectorAll(
+				'.site-main .ct-related-posts .entry-meta .ct-meta-author'
+			)
+		].map(el => el.remove())
+	}
+
+	if (!metaElements.comments) {
+		;[
+			...document.querySelectorAll(
+				'.site-main .ct-related-posts .entry-meta .ct-meta-comments'
+			)
+		].map(el => el.remove())
+	}
+
+	if (!metaElements.date) {
+		;[
+			...document.querySelectorAll(
+				'.site-main .ct-related-posts .entry-meta .ct-meta-date'
+			)
+		].map(el => el.remove())
+	}
+
+	if (!metaElements.categories) {
+		;[
+			...document.querySelectorAll(
+				'.site-main .ct-related-posts .entry-meta .ct-meta-categories'
+			)
+		].map(el => el.remove())
+	}
+
+	;[
+		...document.querySelectorAll('.site-main .ct-related-posts .entry-meta')
+	].map(el => el.children.length === 0 && el.remove())
+
+	if (wp.customize('has_related_meta_label')() === 'no') {
+		;[
+			...document.querySelectorAll(
+				'.site-main .ct-related-posts .entry-meta .ct-meta-label'
+			)
+		].map(label => label.remove())
+	}
+
+	;[
+		...document.querySelectorAll(
+			'.site-main .ct-related-posts .entry-meta .ct-meta-date .ct-meta-element'
+		),
+		...document.querySelectorAll(
+			'.site-main .ct-related-posts .entry-meta .ct-meta-updated-date .ct-meta-element'
+		)
+	].map(dateEl => {
+		dateEl.innerHTML = window.wp.date.format(
+			wp.customize('related_date_format_source')() === 'default'
+				? dateEl.dataset.defaultFormat
+				: wp.customize('related_meta_date_format')() || 'M j, Y',
+			moment(dateEl.dataset.date)
+		)
+	})
+
 	responsiveClassesFor(
 		'related_visibility',
 		document.querySelector('.site-main .ct-related-posts')
 	)
+	;[
+		...document.querySelectorAll(
+			'.ct-related-posts ul[data-columns] .ct-image-container .ct-ratio'
+		)
+	].map(el => setRatioFor(wp.customize('related_featured_image_ratio')(), el))
 
 	markImagesAsLoaded(document.querySelector('.site-main'))
 }
@@ -643,6 +734,18 @@ wp.customize('has_related_posts', val =>
 )
 
 wp.customize('related_location', val => val.bind(to => refreshRelatedPosts()))
+wp.customize('related_meta_elements', val =>
+	val.bind(to => refreshRelatedPosts())
+)
+wp.customize('has_related_meta_label', val =>
+	val.bind(to => refreshRelatedPosts())
+)
+wp.customize('related_date_format_source', val =>
+	val.bind(to => refreshRelatedPosts())
+)
+wp.customize('related_meta_date_format', val =>
+	val.bind(to => refreshRelatedPosts())
+)
 
 wp.customize('single_author_box_type', val => {
 	val.bind(to => {
@@ -666,8 +769,10 @@ wp.customize('related_posts_count', val =>
 	val.bind(() => refreshRelatedPosts())
 )
 wp.customize('related_visibility', val => val.bind(() => refreshRelatedPosts()))
-
 wp.customize('related_label', val => val.bind(() => refreshRelatedPosts()))
+wp.customize('related_featured_image_ratio', val =>
+	val.bind(() => refreshRelatedPosts())
+)
 
 wp.customize('single_page_structure', val =>
 	handleForVal(val, { bodyClass: 'page', class: 'page' })

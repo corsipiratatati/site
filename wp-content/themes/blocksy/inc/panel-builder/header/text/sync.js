@@ -16,7 +16,7 @@ ctEvents.on(
 
 			...typographyOption({
 				id: 'headerTextFont',
-				selector: '.headerTextFont'
+				selector: '.ct-header-text'
 			}),
 
 			headerTextColor: [

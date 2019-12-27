@@ -1,17 +1,18 @@
 wp.customize('has_passepartout', val =>
-  val.bind(to => {
-    document.body.classList.remove('ct-passepartout')
+	val.bind(to => {
+		document.body.classList.remove('ct-passepartout')
 
-    if (to === 'yes') {
-      document.body.classList.add('ct-passepartout')
-    }
-  })
+		if (to === 'yes') {
+			document.body.classList.add('ct-passepartout')
+		}
+	})
 )
 
-wp.customize('forms_type', val =>
-  val.bind(to => {
-    document.body.classList.remove('ct-classic-forms', 'ct-modern-forms')
+const renderFormsType = () => {
+	document.body.dataset.forms = wp
+		.customize('forms_type')()
+		.replace('-forms', '')
+}
 
-    to !== 'ct-classic-forms' && document.body.classList.add(`ct-${to}`)
-  })
-)
+wp.customize('forms_type', val => val.bind(to => renderFormsType()))
+wp.customize('form_elements_panel', val => val.bind(to => renderFormsType()))

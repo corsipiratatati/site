@@ -80,7 +80,7 @@ export const humanizeVariations = variation => {
 		i8: 'Extra-Bold 800 Italic',
 		n9: 'Ultra-Bold 900',
 		i9: 'Ultra-Bold 900 Italic',
-		Default: 'Default'
+		Default: 'Default Weight'
 	}
 
 	return all[variation]

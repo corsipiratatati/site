@@ -1,11 +1,13 @@
 import ctEvents from 'ct-events'
 
 const loadSingleEntryPoint = ({
-	els,
+	els = [],
 	beforeLoad = el => {},
 	events = [],
+	forcedEvents = [],
 	load,
-	mount = ({ mount, el }) => (el ? mount(el) : mount())
+	mount = ({ mount, el }) => (el ? mount(el) : mount()),
+	condition
 }) => {
 	const allEls = (Array.isArray(els) ? els : [els]).reduce(
 		(a, selector) => [
@@ -20,6 +22,15 @@ const loadSingleEntryPoint = ({
 	allEls.map(beforeLoad)
 
 	if (allEls.length === 0) {
+		return
+	}
+
+	if (
+		condition &&
+		!condition({
+			els
+		})
+	) {
 		return
 	}
 
@@ -43,16 +54,29 @@ export const handleEntryPoints = mountEntryPoints => {
 			mountEntryPoints.reduce(
 				(currentEvents, entry) => [
 					...currentEvents,
-					...(entry.events || [])
+					...(entry.events || []),
+					...(entry.forcedEvents || [])
 				],
 				[]
 			)
 		)
 	].map(distinctEvent =>
-		ctEvents.on(distinctEvent, () =>
+		ctEvents.on(distinctEvent, () => {
 			mountEntryPoints
 				.filter(({ events = [] }) => events.indexOf(distinctEvent) > -1)
 				.map(loadSingleEntryPoint)
-		)
+
+			mountEntryPoints
+				.filter(
+					({ forcedEvents = [] }) =>
+						forcedEvents.indexOf(distinctEvent) > -1
+				)
+				.map(entry =>
+					loadSingleEntryPoint({
+						...entry,
+						els: ['body']
+					})
+				)
+		})
 	)
 }

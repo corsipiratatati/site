@@ -105,7 +105,7 @@ const SinglePicker = ({
 				createPortal(
 					<Transition
 						items={isPicking}
-						onRest={isOpen => stopTransitioning()}
+						onRest={() => stopTransitioning()}
 						config={{
 							duration: 100,
 							easing: bezierEasing(0.25, 0.1, 0.25, 1.0)

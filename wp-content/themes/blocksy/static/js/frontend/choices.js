@@ -1,6 +1,5 @@
 import Selectr from 'mobius1-selectr'
 import $ from 'jquery'
-import { onDocumentLoaded } from '../helpers'
 import ctEvents from 'ct-events'
 
 const initCustomSelect = () =>
@@ -50,7 +49,7 @@ ctEvents.on('ct:custom-select-allow:init', () => {
 	})
 })
 
-onDocumentLoaded(() => {
+export const mount = () => {
 	initCustomSelect()
 
 	$ &&
@@ -104,4 +103,4 @@ onDocumentLoaded(() => {
 				.map(el => el.selectr && el.selectr.setValue(''))
 		})
 	}
-})
+}

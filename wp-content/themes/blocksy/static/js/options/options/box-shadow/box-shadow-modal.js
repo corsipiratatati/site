@@ -183,32 +183,34 @@ const SinglePicker = ({
 								/>
 							</div>
 
-							<ul className="ct-shadow-style">
-								<li
-									onClick={() =>
-										onChange({
-											...value,
-											inset: false
-										})
-									}
-									className={classnames({
-										active: !value.inset
-									})}>
-									Outline
-								</li>
-								<li
-									onClick={() =>
-										onChange({
-											...value,
-											inset: true
-										})
-									}
-									className={classnames({
-										active: value.inset
-									})}>
-									Inset
-								</li>
-							</ul>
+							{!option.hide_shadow_placement && (
+								<ul className="ct-shadow-style">
+									<li
+										onClick={() =>
+											onChange({
+												...value,
+												inset: false
+											})
+										}
+										className={classnames({
+											active: !value.inset
+										})}>
+										Outline
+									</li>
+									<li
+										onClick={() =>
+											onChange({
+												...value,
+												inset: true
+											})
+										}
+										className={classnames({
+											active: value.inset
+										})}>
+										Inset
+									</li>
+								</ul>
+							)}
 						</div>
 					))
 				}

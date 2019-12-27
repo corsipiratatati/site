@@ -14,6 +14,9 @@ import { initAllPanels } from '../options/initPanels'
 import { initBuilder } from './panels-builder'
 
 import Options from './controls/options.js'
+import { initWidget } from '../backend/widgets'
+
+import $ from 'jquery'
 
 listenToChanges()
 listenToVariables()
@@ -21,7 +24,9 @@ listenToVariables()
 defineCustomizerControl('ct-options', Options)
 
 if ($ && $.fn) {
-	$(document).on('widget-added', () => initAllPanels())
+	$(document).on('widget-added', (event, widget) => {
+		initWidget(widget[0])
+	})
 }
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -32,11 +37,6 @@ document.addEventListener('DOMContentLoaded', () => {
 		.filter(({ params: { type } }) => type === 'ct-options')
 		.map(control => {
 			if (wp.customize.section(control.section)) {
-				console.log(
-					'geasda',
-					wp.customize.section(control.section).container
-				)
-
 				wp.customize
 					.section(control.section)
 					.container.on('keydown', function(event) {

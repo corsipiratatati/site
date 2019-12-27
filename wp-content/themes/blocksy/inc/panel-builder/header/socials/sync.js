@@ -81,7 +81,7 @@ ctEvents.on(
 		if (optionId === 'header_socials') {
 			updateAndSaveEl(selector, el => {
 				const newHtml = getCache().querySelector(
-					`.ct-customizer-preview-cache [data-id="footer-main-area-socials"]`
+					`.ct-customizer-preview-cache [data-id="socials-general-cache"]`
 				).innerHTML
 
 				const cache = document.createElement('div')
@@ -104,6 +104,7 @@ ctEvents.on(
 				responsiveClassesFor({ ...optionValue, desktop: true }, el)
 			)
 		}
+
 		if (optionId === 'headerSocialsColor') {
 			updateAndSaveEl(
 				selector,

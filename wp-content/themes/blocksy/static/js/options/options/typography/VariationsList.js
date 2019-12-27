@@ -21,9 +21,11 @@ const VariationsList = ({ option, value, onChange, typographyList, props }) => {
 
 	useEffect(() => {
 		parentEl.current.scrollTop =
-			parentEl.current.children[
-				selectedFontFamily.all_variations.indexOf(value.variation)
-			].offsetTop - parentEl.current.offsetTop
+			(
+				parentEl.current.children[
+					selectedFontFamily.all_variations.indexOf(value.variation)
+				] || parentEl.current.children[0]
+			).offsetTop - parentEl.current.offsetTop
 	}, [])
 
 	return (

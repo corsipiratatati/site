@@ -19,6 +19,81 @@ const round = (value, decimalPlaces = 1) => {
 	return rounded
 }
 
+const UnitsList = ({
+	option,
+	onChange,
+	is_open,
+	toggleOpen,
+	currentUnit,
+	getNumericValue,
+	getAllowedDecimalPlaces
+}) => {
+	const pickUnit = unit => {
+		const numericValue = getNumericValue()
+
+		onChange(
+			`${round(
+				clamp(
+					option.units.find(({ unit: u }) => u === unit).min,
+					option.units.find(({ unit: u }) => u === unit).max,
+					numericValue === '' ? -Infinity : numericValue
+				),
+				getAllowedDecimalPlaces(unit)
+			)}${unit}`
+		)
+	}
+
+	return (
+		<Fragment>
+			<span onClick={() => toggleOpen()} className="ct-current-value">
+				{currentUnit || '―'}
+			</span>
+
+			<OutsideClickHandler
+				onOutsideClick={() => {
+					if (!is_open) {
+						return
+					}
+
+					toggleOpen()
+				}}>
+				<ul className="ct-units-list">
+					{option.units
+						.filter(({ unit }) => unit !== currentUnit)
+
+						.reduce(
+							(current, el, index) => [
+								...current.slice(
+									0,
+									index % 2 === 0 ? undefined : -1
+								),
+								...(index % 2 === 0
+									? [[el]]
+									: [[current[current.length - 1][0], el]])
+							],
+							[]
+						)
+
+						.map(group => (
+							<li key={group[0].unit}>
+								{group.map(({ unit }) => (
+									<span
+										key={unit}
+										onClick={() => {
+											pickUnit(unit)
+											toggleOpen()
+										}}>
+										{unit || '―'}
+									</span>
+								))}
+							</li>
+						))}
+				</ul>
+			</OutsideClickHandler>
+		</Fragment>
+	)
+}
+
 export default class Slider extends Component {
 	state = {
 		is_dragging: false,
@@ -53,7 +128,9 @@ export default class Slider extends Component {
 					this.props.value
 						.toString()
 						.replace(/[0-9]/g, '')
-						.replace(/\./g, ''),
+						.replace(/\-/g, '')
+						.replace(/\./g, '')
+						.replace('CT_CSS_SKIP_RULE', ''),
 					this.props.option.units[0].unit
 			  )
 			: ''
@@ -72,7 +149,19 @@ export default class Slider extends Component {
 			  ).min
 			: this.props.option.min
 
-	getNumericValue = () => parseFloat(this.props.value, 10)
+	getNumericValue = () => {
+		const maybeValue = parseFloat(this.props.value, 10)
+
+		if (maybeValue === 0) {
+			return maybeValue
+		}
+
+		if (!maybeValue) {
+			return ''
+		}
+
+		return maybeValue
+	}
 
 	computeAndSendNewValue({ pageX }) {
 		let { top, left, width } = this.el.current.getBoundingClientRect()
@@ -103,6 +192,38 @@ export default class Slider extends Component {
 		})
 
 		this.detachEvents()
+	}
+
+	handleBlur = () => {
+		if (this.props.option.value === 'CT_CSS_SKIP_RULE') {
+			if (this.props.value === 'CT_CSS_SKIP_RULE') {
+				return
+			}
+
+			if (this.getNumericValue() === '') {
+				this.props.onChange('CT_CSS_SKIP_RULE')
+				return
+			}
+		}
+
+		this.props.onChange(
+			`${clamp(
+				parseFloat(this.getMin(), 10),
+				parseFloat(this.getMax(), 10),
+				parseFloat(this.getNumericValue(), 10)
+			)}${this.getCurrentUnit()}`
+		)
+	}
+
+	handleChange = value => {
+		if (this.props.option.value === 'CT_CSS_SKIP_RULE') {
+			if (value.toString().trim() === '') {
+				this.props.onChange('CT_CSS_SKIP_RULE')
+				return
+			}
+		}
+
+		this.props.onChange(`${value || this.getMin()}${this.getCurrentUnit()}`)
 	}
 
 	attachEvents() {
@@ -141,7 +262,11 @@ export default class Slider extends Component {
 			clamp(
 				parseFloat(this.getMin(), 10),
 				parseFloat(this.getMax(), 10),
-				parseFloat(this.getNumericValue(), 10)
+				parseFloat(this.getNumericValue(), 10) === 0
+					? 0
+					: parseFloat(this.getNumericValue(), 10)
+					? parseFloat(this.getNumericValue(), 10)
+					: parseFloat(this.getMin(), 10)
 			)
 		)}`
 
@@ -193,20 +318,9 @@ export default class Slider extends Component {
 								1 / Math.pow(10, this.getAllowedDecimalPlaces())
 							}
 							value={this.getNumericValue()}
-							onBlur={() =>
-								this.props.onChange(
-									`${clamp(
-										parseFloat(this.getMin(), 10),
-										parseFloat(this.getMax(), 10),
-										parseFloat(this.getNumericValue(), 10)
-									)}${this.getCurrentUnit()}`
-								)
-							}
+							onBlur={() => this.handleBlur()}
 							onChange={({ target: { value } }) =>
-								this.props.onChange(
-									`${value ||
-										this.getMin()}${this.getCurrentUnit()}`
-								)
+								this.handleChange(value)
 							}
 						/>
 
@@ -222,103 +336,21 @@ export default class Slider extends Component {
 						)}
 
 						{this.hasUnitsList() && (
-							<Fragment>
-								<span
-									onClick={() =>
-										this.setState({
-											is_open: !this.state.is_open
-										})
-									}
-									className="ct-current-value">
-									{this.getCurrentUnit() || '―'}
-								</span>
-
-								<OutsideClickHandler
-									onOutsideClick={() => {
-										if (!this.state.is_open) {
-											return
-										}
-
-										this.setState({ is_open: false })
-									}}>
-									<ul className="ct-units-list">
-										{this.props.option.units
-											.filter(
-												({ unit }) =>
-													unit !==
-													this.getCurrentUnit()
-											)
-
-											.reduce(
-												(current, el, index) => [
-													...current.slice(
-														0,
-														index % 2 === 0
-															? undefined
-															: -1
-													),
-													...(index % 2 === 0
-														? [[el]]
-														: [
-																[
-																	current[
-																		current.length -
-																			1
-																	][0],
-																	el
-																]
-														  ])
-												],
-												[]
-											)
-
-											.map(group => (
-												<li key={group[0].unit}>
-													{group.map(({ unit }) => (
-														<span
-															key={unit}
-															onClick={() => {
-																this.props.onChange(
-																	`${round(
-																		clamp(
-																			this.props.option.units.find(
-																				({
-																					unit: u
-																				}) =>
-																					u ===
-																					unit
-																			)
-																				.min,
-																			this.props.option.units.find(
-																				({
-																					unit: u
-																				}) =>
-																					u ===
-																					unit
-																			)
-																				.max,
-																			parseFloat(
-																				this.getNumericValue(),
-																				10
-																			)
-																		),
-																		this.getAllowedDecimalPlaces(
-																			unit
-																		)
-																	)}${unit}`
-																)
-																this.setState({
-																	is_open: false
-																})
-															}}>
-															{unit || '―'}
-														</span>
-													))}
-												</li>
-											))}
-									</ul>
-								</OutsideClickHandler>
-							</Fragment>
+							<UnitsList
+								option={this.props.option}
+								onChange={this.props.onChange}
+								is_open={this.state.is_open}
+								toggleOpen={() =>
+									this.setState({
+										is_open: !this.state.is_open
+									})
+								}
+								currentUnit={this.getCurrentUnit()}
+								getNumericValue={this.getNumericValue}
+								getAllowedDecimalPlaces={
+									this.getAllowedDecimalPlaces
+								}
+							/>
 						)}
 					</div>
 				)}

@@ -6,6 +6,7 @@ import ResponsiveControls, {
 } from '../customizer/components/responsive-controls'
 import deepEqual from 'deep-equal'
 import { normalizeCondition, matchValuesWithCondition } from 'match-conditions'
+import { __ } from 'ct-i18n'
 
 const CORE_OPTIONS_CONTEXT = require.context('./options/', true, /\.js$/)
 
@@ -277,7 +278,7 @@ class GenericOptionType extends Component {
 						value: option.responsive
 							? maybePromoteScalarValueIntoResponsive(
 									option.value || ''
-							  )
+							  )[this.state.device]
 							: option.value || ''
 					},
 					value: valueWithResponsive,
@@ -391,7 +392,11 @@ class GenericOptionType extends Component {
 						option.responsive
 					) && (
 						<div className="ct-disabled-notification">
-							Option can't be edited for current device
+							{option.disabledDeviceMessage ||
+								__(
+									"Option can't be edited for current device",
+									'blocksy'
+								)}
 						</div>
 					)}
 

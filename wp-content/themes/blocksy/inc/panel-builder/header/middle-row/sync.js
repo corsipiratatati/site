@@ -24,14 +24,14 @@ export const handleRowVariables = ({ selector }) => ({
 	}),
 
 	headerRowTopBorder: {
-		selector: `${selector}[data-border] > div:before`,
+		selector: `${selector}[data-border]:before`,
 		variable: 'border',
 		type: 'border',
 		responsive: true
 	},
 
 	headerRowBottomBorder: {
-		selector: `${selector}[data-border] > div:after`,
+		selector: `${selector}[data-border]:after`,
 		variable: 'border',
 		type: 'border',
 		responsive: true
@@ -116,11 +116,11 @@ ctEvents.on(
 	'ct:header:sync:collect-variable-descriptors',
 	variableDescriptors => {
 		variableDescriptors['middle-row'] = handleRowVariables({
-			selector: '[data-row="middle"]'
+			selector: 'header [data-row="middle"]'
 		})
 	}
 )
 
 ctEvents.on('ct:header:sync:item:middle-row', changeDescriptor =>
-	handleRowOptions({ selector: '[data-row="middle"]', changeDescriptor })
+	handleRowOptions({ selector: 'header [data-row="middle"]', changeDescriptor })
 )

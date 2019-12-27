@@ -2,12 +2,8 @@ import './public-path.js'
 import './frontend/polyfills'
 import './frontend/lazy-load'
 import './frontend/comments'
-import './frontend/social-buttons'
 import { maybeMountPerfLogger } from './frontend/perf-log'
-import './frontend/choices'
 import { watchLayoutContainerForReveal } from './frontend/animated-element'
-import './frontend/parallax/register-listener'
-import './frontend/woocommerce/single-product-gallery'
 import { onDocumentLoaded, handleEntryPoints } from './helpers'
 import { mountRenderHeaderLoop } from './frontend/header/render-loop'
 import ctEvents from 'ct-events'
@@ -18,6 +14,33 @@ maybeMountPerfLogger()
 
 onDocumentLoaded(() => {
 	handleEntryPoints([
+		{
+			els: '[data-parallax]',
+			load: () => import('./frontend/parallax/register-listener'),
+			events: ['blocksy:parallax:init']
+		},
+
+		{
+			els: '[data-share-network]',
+			load: () => import('./frontend/social-buttons')
+		},
+
+		{
+			els: 'body.single-product',
+			load: () => import('./frontend/woocommerce/single-product-gallery'),
+			forcedEvents: ['ct:flexy:update']
+		},
+
+		{
+			els: [
+				document.querySelector('select')
+					? [document.querySelector('select')]
+					: []
+			],
+			load: () => import('./frontend/choices'),
+			events: ['ct:custom-select:init']
+		},
+
 		{
 			els: '[data-footer-reveal]',
 			load: () => import('./frontend/footer-reveal'),
@@ -50,6 +73,10 @@ onDocumentLoaded(() => {
 
 		{
 			els: ['.entries[data-layout]', '.shop-entries[data-layout]'],
+			condition: () =>
+				!!document.querySelector(
+					'.ct-pagination:not([data-type="simple"])'
+				),
 			load: () => import('./frontend/layouts/infinite-scroll'),
 			beforeLoad: el => watchLayoutContainerForReveal(el)
 		},
@@ -98,6 +125,10 @@ onDocumentLoaded(() => {
 
 		{
 			els: '[id="search-modal"] .search-form[data-live-results]',
+			condition: () =>
+				!!document.querySelector(
+					'header[data-device] [data-id="search"]'
+				),
 			load: () => import('./frontend/search-implementation'),
 			mount: ({ mount, el }) =>
 				mount(el, {
@@ -108,10 +139,17 @@ onDocumentLoaded(() => {
 
 		{
 			els: 'header[data-device="desktop"] [data-id*="menu"] > .menu',
+			condition: () =>
+				!!document.querySelector(
+					'header[data-device="desktop"] [data-id*="menu"] .menu-item-has-children'
+				),
 			load: () => import('./frontend/header/menu'),
 			mount: ({ handleFirstLevelForMenu, el }) =>
 				handleFirstLevelForMenu(el),
-			events: ['ct:header:update', 'ct:header:render-frame']
+			events: [
+				'ct:header:update',
+				...(window.wp && wp.customize ? ['ct:header:render-frame'] : [])
+			]
 		},
 
 		{
@@ -154,6 +192,7 @@ onDocumentLoaded(() => {
 	])
 
 	setTimeout(() => document.body.classList.remove('ct-loading'), 1500)
+
 	mountRenderHeaderLoop()
 })
 

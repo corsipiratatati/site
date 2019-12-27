@@ -26,21 +26,18 @@ export const handleMenuVariables = ({ selector }) => ({
 			selector: `${selector} > ul > li > a`,
 			variable: 'color',
 			type: 'color:default',
-			responsive: true
 		},
 
 		{
 			selector: `${selector} > ul > li > a`,
 			variable: 'colorHover',
 			type: 'color:hover',
-			responsive: true
 		},
 
 		{
 			selector: `${selector} > ul > li > a`,
-			variable: 'colorActive',
-			type: 'color:active',
-			responsive: true
+			variable: 'colorHoverType3',
+			type: 'color:hover',
 		}
 	],
 

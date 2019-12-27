@@ -23,6 +23,22 @@ import FontOptions from './FontOptions'
 
 import GenericOptionType from '../../GenericOptionType'
 
+const combineRefs = (...refs) => el => {
+	refs.map(ref => {
+		if (typeof ref === 'function') {
+			ref(el)
+		} else if (
+			typeof ref === 'object' &&
+			ref !== null &&
+			ref.hasOwnProperty('current')
+		) {
+			ref.current = el
+		} else if (ref === null) {
+			// No-op
+		}
+	})
+}
+
 function fuzzysearch(needle, haystack) {
 	var hlen = haystack.length
 	var nlen = needle.length
@@ -55,7 +71,8 @@ const TypographyModal = ({
 	previousView,
 	setCurrentView,
 	setInititialView,
-	onChange
+	onChange,
+	wrapperProps = {}
 }) => {
 	const [typographyList, setTypographyList] = useState(
 		getDefaultFonts(option)
@@ -63,7 +80,13 @@ const TypographyModal = ({
 	const [isSearch, setIsSearch] = useState(false)
 	const [searchTerm, setSearchTerm] = useState('')
 
+	const modalWrapper = useRef()
+
 	const direction = useMemo(() => {
+		if (previousView === '_') {
+			return 'static'
+		}
+
 		if (
 			(currentView === 'search' && previousView === 'fonts') ||
 			(previousView === 'search' && currentView === 'fonts')
@@ -160,7 +183,7 @@ const TypographyModal = ({
 		if (initialView && initialView !== 'done') {
 			setSearchTerm('')
 			setTimeout(() => {
-				setInititialView('done')
+				// setInititialView('done')
 			})
 		}
 
@@ -189,13 +212,23 @@ const TypographyModal = ({
 
 	return (
 		<div
-			ref={innerRef}
-			data-placement={placement}
-			className="ct-typography-modal">
+			ref={combineRefs(innerRef, modalWrapper)}
+			data-placement={
+				!modalWrapper.current ||
+				(modalWrapper.current &&
+					modalWrapper.current.parentNode.getBoundingClientRect()
+						.top -
+						modalWrapper.current.getBoundingClientRect().height <
+						60)
+					? 'bottom'
+					: placement
+			}
+			className="ct-typography-modal"
+			{...wrapperProps}>
 			<ul
 				className={classnames('ct-typography-top', {
 					'ct-switch-panel': currentView !== 'options',
-					'ct-static': initialView !== 'done'
+					'ct-static': previousView === '_'
 				})}>
 				<li
 					className="ct-back"
@@ -263,7 +296,7 @@ const TypographyModal = ({
 
 			<Transition
 				items={currentView}
-				immediate={direction === 'static' || initialView !== 'done'}
+				immediate={direction === 'static'}
 				config={(item, type) => ({
 					duration: 210,
 					easing: bezierEasing(0.455, 0.03, 0.515, 0.955)

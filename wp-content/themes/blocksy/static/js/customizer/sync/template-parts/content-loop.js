@@ -155,7 +155,11 @@ const renderEntries = prefix => {
 					e.querySelector(
 						'.entry-meta .ct-meta-date .ct-meta-element'
 					).innerHTML = window.wp.date.format(
-						component.date_format || 'M j, Y',
+						component.date_format_source === 'default'
+							? e.querySelector(
+									'.entry-meta .ct-meta-date .ct-meta-element'
+							  ).dataset.defaultFormat
+							: component.date_format || 'M j, Y',
 						moment(
 							e.querySelector(
 								'.entry-meta .ct-meta-date .ct-meta-element'
@@ -173,7 +177,11 @@ const renderEntries = prefix => {
 					e.querySelector(
 						'.entry-meta .ct-meta-updated-date .ct-meta-element'
 					).innerHTML = window.wp.date.format(
-						component.date_format || 'M j, Y',
+						component.date_format_source === 'default'
+							? e.querySelector(
+									'.entry-meta .ct-meta-date .ct-meta-element'
+							  ).dataset.defaultFormat
+							: component.date_format || 'M j, Y',
 						moment(
 							e.querySelector(
 								'.entry-meta .ct-meta-updated-date .ct-meta-element'
@@ -401,19 +409,48 @@ const getVariablesForPrefix = prefix => ({
 		}
 	],
 
-	[`${prefix}_cardButtonTextColor`]: [
+	[`${prefix}_cardButtonSimpleTextColor`]: [
 		{
-			selector: '.entry-button',
+			selector: '.entry-button[data-type="simple"]',
+			variable: 'color',
+			type: 'color:default'
+		},
+
+		{
+			selector: '.entry-button[data-type="simple"]',
+			variable: 'colorHover',
+			type: 'color:hover'
+		}
+	],
+
+	[`${prefix}_cardButtonBackgroundTextColor`]: [
+		{
+			selector: '.entry-button[data-type="background"]',
 			variable: 'buttonTextInitialColor',
 			type: 'color:default'
 		},
 
 		{
-			selector: '.entry-button',
+			selector: '.entry-button[data-type="background"]',
 			variable: 'buttonTextHoverColor',
 			type: 'color:hover'
 		}
 	],
+
+	[`${prefix}_cardButtonOutlineTextColor`]: [
+		{
+			selector: '.entry-button[data-type="outline"]',
+			variable: 'color',
+			type: 'color:default'
+		},
+
+		{
+			selector: '.entry-button[data-type="outline"]',
+			variable: 'colorHover',
+			type: 'color:hover'
+		}
+	],
+
 
 	[`${prefix}_cardButtonColor`]: [
 		{
@@ -441,6 +478,12 @@ const getVariablesForPrefix = prefix => ({
 		type: 'border'
 	},
 
+	[`${prefix}_cardDivider`]: {
+		selector: '[data-cards="simple"] .entry-card',
+		variable: 'border',
+		type: 'border'
+	},
+
 	[`${prefix}_cardsGap`]: {
 		selector: '.entries',
 		variable: 'cardsGap',
@@ -459,6 +502,13 @@ const getVariablesForPrefix = prefix => ({
 		selector: '[data-cards="boxed"] .entry-card',
 		type: 'box-shadow',
 		variable: 'boxShadow',
+		responsive: true
+	},
+
+	[`${prefix}_cardThumbRadius`]: {
+		selector: '.entry-card .ct-image-container',
+		type: 'spacing',
+		variable: 'borderRadius',
 		responsive: true
 	},
 

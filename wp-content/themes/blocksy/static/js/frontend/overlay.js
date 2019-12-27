@@ -167,9 +167,15 @@ export const handleClick = (e, settings) => {
 ctEvents.on('ct:offcanvas:force-close', settings => hideOffcanvas(settings))
 
 export const mount = el => {
-	el.addEventListener('click', event =>
+	if (el.hasSearchEventListener) {
+		return
+	}
+
+	el.hasSearchEventListener = true
+
+	el.addEventListener('click', event => {
 		handleClick(event, {
 			container: document.querySelector(el.hash)
 		})
-	)
+	})
 }
