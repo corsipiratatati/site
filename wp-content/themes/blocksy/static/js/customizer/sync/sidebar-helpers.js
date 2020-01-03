@@ -2,13 +2,11 @@ import { getCache } from './helpers'
 import { markImagesAsLoaded } from '../../frontend/lazy-load-helpers'
 
 export const renderSidebarPosition = position => {
-	document.querySelector(
-		'main #primary > .ct-container'
-	).dataset.sidebar = position
+	document.querySelector('main #primary > div').dataset.sidebar = position
 }
 
 export const renderSidebar = (enabled, position) => {
-	const sidebarEl = document.querySelector('main #primary > .ct-container')
+	const sidebarEl = document.querySelector('main #primary > div')
 
 	if (enabled === 'no') {
 		if (sidebarEl.querySelector('aside')) {
@@ -16,12 +14,8 @@ export const renderSidebar = (enabled, position) => {
 		}
 
 		document
-			.querySelector('main #primary > .ct-container')
+			.querySelector('main #primary > div')
 			.removeAttribute('data-sidebar')
-
-		if (!document.body.classList.contains('single-product')) {
-			document.body.classList.remove('sidebar')
-		}
 
 		return
 	}
@@ -41,14 +35,9 @@ export const renderSidebar = (enabled, position) => {
 		sidebarEl.appendChild(e.firstElementChild)
 	}
 
-	document.querySelector(
-		'main #primary > .ct-container'
-	).dataset.sidebar = position
-
-	document.body.classList.add('sidebar')
+	document.querySelector('main #primary > div').dataset.sidebar = position
 
 	ctEvents.trigger('ct:sidebar:update')
-	markImagesAsLoaded(
-		document.querySelector('main #primary > .ct-container aside')
-	)
+
+	markImagesAsLoaded(document.querySelector('main #primary > div aside'))
 }

@@ -1,7 +1,6 @@
 import ctEvents from 'ct-events'
-import { getCache, setRatioFor } from '../helpers'
+import { getCache, setRatioFor, getOptionFor } from '../helpers'
 import { markImagesAsLoaded } from '../../../frontend/lazy-load-helpers'
-import { getOptionFor } from '../hero-section'
 import date from '@wordpress/date'
 import { typographyOption } from '../variables/typography'
 
@@ -31,10 +30,22 @@ const renderEntries = prefix => {
 
 		el.dataset.layout = structure
 
-		el.removeAttribute('data-page-structure')
+		el.removeAttribute('data-structure')
+
+		el.closest('.content-area').firstElementChild.classList.remove(
+			'ct-container',
+			'ct-container-narrow'
+		)
 
 		if (structure === 'gutenberg') {
-			el.dataset.pageStructure = 'narrow'
+			el.dataset.structure = 'narrow'
+			el.closest('.content-area').firstElementChild.classList.add(
+				'ct-container-narrow'
+			)
+		} else {
+			el.closest('.content-area').firstElementChild.classList.add(
+				'ct-container'
+			)
 		}
 
 		if (structure !== 'grid') {
@@ -108,13 +119,13 @@ const renderEntries = prefix => {
 					component.meta_type || 'simple'
 
 				if ((component.meta_type || 'simple') === 'simple') {
-					;[...e.querySelectorAll('.entry-meta .ct-meta-icon')].map(
-						el => el.parentNode.removeChild(el)
-					)
+					;[
+						...e.querySelectorAll('.entry-meta .ct-meta-icon')
+					].map(el => el.parentNode.removeChild(el))
 				} else {
-					;[...e.querySelectorAll('.entry-meta .ct-meta-label')].map(
-						el => el.parentNode.removeChild(el)
-					)
+					;[
+						...e.querySelectorAll('.entry-meta .ct-meta-label')
+					].map(el => el.parentNode.removeChild(el))
 				}
 
 				if (
@@ -451,7 +462,6 @@ const getVariablesForPrefix = prefix => ({
 		}
 	],
 
-
 	[`${prefix}_cardButtonColor`]: [
 		{
 			selector: '.entry-button',
@@ -496,6 +506,13 @@ const getVariablesForPrefix = prefix => ({
 		variable: 'cardSpacing',
 		responsive: true,
 		unit: 'px'
+	},
+
+	[`${prefix}_cardRadius`]: {
+		selector: '[data-cards="boxed"] .entry-card',
+		type: 'spacing',
+		variable: 'borderRadius',
+		responsive: true
 	},
 
 	[`${prefix}_cardShadow`]: {

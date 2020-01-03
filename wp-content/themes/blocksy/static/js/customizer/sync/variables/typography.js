@@ -62,7 +62,6 @@ const loadGoogleFonts = (font_family, variation) => {
 
 	if (loadedFonts[font_family]) {
 		if (loadedFonts[font_family].indexOf(variation) > -1) return
-
 		loadedFonts[font_family] = [...loadedFonts[font_family], variation]
 	} else {
 		loadedFonts[font_family] = [variation]
@@ -198,7 +197,7 @@ export const getTypographyVariablesFor = () => ({
 
 	...typographyOption({
 		id: 'blockquote',
-		selector: '.entry-content blockquote p, .ct-quote-widget blockquote p'
+		selector: '.wp-block-quote.is-style-large p, .wp-block-pullquote p, .ct-quote-widget blockquote'
 	}),
 
 	...typographyOption({

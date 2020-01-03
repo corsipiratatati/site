@@ -19,11 +19,22 @@ const initSingleCustomSelect = (element, allow = false) => {
 		return
 	}
 
+	if (element.closest('[class*="forminator-design"]')) {
+		if (
+			!element
+				.closest('[class*="forminator-design"]')
+				.classList.contains('forminator-design--none')
+		) {
+			return
+		}
+	}
+
 	const searchable =
 		element.matches('.woocommerce-address-fields .country_select') ||
 		element.matches('.woocommerce-address-fields .state_select') ||
 		element.matches('.woocommerce-billing-fields .country_select') ||
-		element.matches('.woocommerce-billing-fields .state_select')
+		element.matches('.woocommerce-billing-fields .state_select') ||
+		element.closest('.forminator-design--none')
 
 	if ($ && $.fn) {
 		$(element).on('change', ({ target: { value } }) => {

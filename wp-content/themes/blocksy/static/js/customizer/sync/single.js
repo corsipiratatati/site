@@ -1,7 +1,12 @@
 import { markImagesAsLoaded } from '../../frontend/lazy-load-helpers'
 import { responsiveClassesFor } from './footer'
 import ctEvents from 'ct-events'
-import { getCache, setRatioFor } from './helpers'
+import {
+	getCache,
+	setRatioFor,
+	watchOptionsWithPrefix,
+	getOptionFor
+} from './helpers'
 import { renderHeroSection, getPrefixFor } from './hero-section'
 
 const pageStructureFor = page_structure_type => {
@@ -15,14 +20,6 @@ const pageStructureFor = page_structure_type => {
 
 	if (page_structure_type === 'type-5') {
 		return 'normal'
-	}
-
-	if (page_structure_type === 'type-6') {
-		return 'normal:enhanced'
-	}
-
-	if (page_structure_type === 'type-7') {
-		return 'boundless'
 	}
 
 	return 'none'
@@ -40,45 +37,81 @@ const getSidebarTypeFor = page_structure_type => {
 	return 'none'
 }
 
-const handleForVal = (val, args = {}) => {
-	args = {
-		bodyClass: 'single-post',
-		class: 'post',
-		...args
-	}
-	val.bind(to => {
+watchOptionsWithPrefix({
+	getPrefix: () => {
+		if (document.body.classList.contains('single')) {
+			return 'single_blog_post'
+		}
+
+		if (
+			document.body.classList.contains('page') ||
+			document.body.classList.contains('blog') ||
+			document.body.classList.contains('post-type-archive-product')
+		) {
+			return 'single_page'
+		}
+
+		return false
+	},
+
+	getOptionsForPrefix: ({ prefix }) =>
+		prefix === 'single_page'
+			? ['single_page_structure', 'page_content_style']
+			: ['single_blog_post_structure', 'single_content_style'],
+
+	render: ({ prefix }) => {
 		if (
 			getCache().querySelector(
-				'.ct-customizer-preview-cache [data-page-structure-custom]'
+				'.ct-customizer-preview-cache [data-structure-custom]'
 			)
 		) {
 			return
 		}
 
-		if (!document.body.classList.contains(args.bodyClass)) {
-			return
+		let structure = getOptionFor(
+			prefix === 'single_page'
+				? 'single_page_structure'
+				: 'single_blog_post_structure'
+		)
+
+		let pageStructure = pageStructureFor(structure)
+		let sidebarType = getSidebarTypeFor(structure)
+
+		let contentStyle = getOptionFor(
+			prefix === 'single_page'
+				? 'page_content_style'
+				: 'single_content_style'
+		)
+		let editor = 'default'
+
+		if (document.body.className.indexOf('elementor-page') > -1) {
+			editor = 'elementor'
 		}
 
-		if (pageStructureFor(to) !== 'none') {
-			document.querySelector(
-				`article.${args.class}`
-			).dataset.pageStructure = pageStructureFor(to)
-		} else {
-			document
-				.querySelector(`article.${args.class}`)
-				.removeAttribute('data-page-structure')
+		if (document.body.classList.contains('brz')) {
+			editor = 'brizy'
 		}
+
+		let computedStructure =
+			pageStructure === 'none'
+				? contentStyle
+				: `${editor}:${contentStyle}:${pageStructure}`
+
+		document.querySelector(
+			`article.${prefix === 'single_page' ? 'page' : 'post'}`
+		).dataset.structure = computedStructure
 
 		const sidebarEl = document.querySelector(
 			'.site-main > .content-area > [class*="ct-container"]'
 		)
 
-		sidebarEl.classList.remove('ct-container', 'ct-container-boundless')
+		sidebarEl.classList.remove('ct-container', 'ct-container-narrow')
+
 		sidebarEl.classList.add(
-			to === 'type-7' ? 'ct-container-boundless' : 'ct-container'
+			pageStructure === 'narrow' ? 'ct-container-narrow' : 'ct-container'
 		)
 
-		if (getSidebarTypeFor(to) === 'none') {
+		if (sidebarType === 'none') {
 			if (sidebarEl.querySelector('aside')) {
 				sidebarEl.removeChild(sidebarEl.querySelector('aside'))
 			}
@@ -86,12 +119,16 @@ const handleForVal = (val, args = {}) => {
 			sidebarEl.removeAttribute('data-sidebar')
 			document.body.classList.remove('sidebar')
 		} else {
+			if (sidebarEl.dataset.sidebar === sidebarType) {
+				return
+			}
+
 			document.body.classList.add('sidebar')
 			if (sidebarEl.querySelector('aside')) {
 				sidebarEl.removeChild(sidebarEl.querySelector('aside'))
 			}
 
-			sidebarEl.dataset.sidebar = getSidebarTypeFor(to)
+			sidebarEl.dataset.sidebar = sidebarType
 
 			const newHtml = getCache().querySelector(
 				`.ct-customizer-preview-cache [data-id="sidebar"]`
@@ -107,8 +144,8 @@ const handleForVal = (val, args = {}) => {
 
 		markImagesAsLoaded(document.querySelector('.site-main'))
 		window.ctEvents.trigger('ct:sidebar:update')
-	})
-}
+	}
+})
 
 export const replaceArticleAndRemoveParts = () => {
 	if (
@@ -128,14 +165,9 @@ export const replaceArticleAndRemoveParts = () => {
 		'.single-post .site-main .content-area article'
 	)
 
-	if (article) {
-		article.dataset.content =
-			wp.customize('single_content_style')() || 'wide'
-	}
-
 	if ((wp.customize('has_share_box')() || 'yes') === 'no') {
 		const shareBox = document.querySelectorAll(
-			'.site-main .content-area article .share-box'
+			'.site-main .content-area article .ct-share-box'
 		)
 		;[...shareBox].map(el => el && el.parentNode.removeChild(el))
 	} else {
@@ -151,7 +183,7 @@ export const replaceArticleAndRemoveParts = () => {
 
 		if (!shareBox1Location.top && shareBoxType !== 'type-2') {
 			const header = document.querySelector(
-				'.site-main .content-area article .share-box[data-location="top"]'
+				'.site-main .content-area article .ct-share-box[data-location="top"]'
 			)
 
 			if (header) {
@@ -161,7 +193,7 @@ export const replaceArticleAndRemoveParts = () => {
 
 		if (!shareBox1Location.bottom || shareBoxType === 'type-2') {
 			const content = document.querySelector(
-				'.site-main .content-area article .share-box[data-location="bottom"]'
+				'.site-main .content-area article .ct-share-box[data-location="bottom"]'
 			)
 
 			if (content) {
@@ -171,7 +203,7 @@ export const replaceArticleAndRemoveParts = () => {
 
 		if (shareBoxType === 'type-2') {
 			const header = document.querySelector(
-				'.site-main .content-area article .share-box[data-location="top"]'
+				'.site-main .content-area article .ct-share-box[data-location="top"]'
 			)
 
 			header.dataset.type = shareBoxType
@@ -183,7 +215,7 @@ export const replaceArticleAndRemoveParts = () => {
 		if ((wp.customize('share_facebook')() || 'yes') === 'no') {
 			;[
 				...document.querySelectorAll(
-					'.site-main .content-area article [data-share-network="facebook"]'
+					'.site-main .content-area article [data-network="facebook"]'
 				)
 			].map(el => el.parentNode.removeChild(el))
 		}
@@ -191,7 +223,7 @@ export const replaceArticleAndRemoveParts = () => {
 		if ((wp.customize('share_twitter')() || 'yes') === 'no') {
 			;[
 				...document.querySelectorAll(
-					'.site-main .content-area article [data-share-network="twitter"]'
+					'.site-main .content-area article [data-network="twitter"]'
 				)
 			].map(el => el.parentNode.removeChild(el))
 		}
@@ -199,7 +231,7 @@ export const replaceArticleAndRemoveParts = () => {
 		if ((wp.customize('share_vk')() || 'yes') === 'no') {
 			;[
 				...document.querySelectorAll(
-					'.site-main .content-area article [data-share-network="vk"]'
+					'.site-main .content-area article [data-network="vk"]'
 				)
 			].map(el => el.parentNode.removeChild(el))
 		}
@@ -207,7 +239,7 @@ export const replaceArticleAndRemoveParts = () => {
 		if ((wp.customize('share_ok')() || 'yes') === 'no') {
 			;[
 				...document.querySelectorAll(
-					'.site-main .content-area article [data-share-network="ok"]'
+					'.site-main .content-area article [data-network="ok"]'
 				)
 			].map(el => el.parentNode.removeChild(el))
 		}
@@ -215,7 +247,7 @@ export const replaceArticleAndRemoveParts = () => {
 		if ((wp.customize('share_telegram')() || 'yes') === 'no') {
 			;[
 				...document.querySelectorAll(
-					'.site-main .content-area article [data-share-network="telegram"]'
+					'.site-main .content-area article [data-network="telegram"]'
 				)
 			].map(el => el.parentNode.removeChild(el))
 		}
@@ -223,7 +255,7 @@ export const replaceArticleAndRemoveParts = () => {
 		if ((wp.customize('share_pinterest')() || 'yes') === 'no') {
 			;[
 				...document.querySelectorAll(
-					'.site-main .content-area article [data-share-network="pinterest"]'
+					'.site-main .content-area article [data-network="pinterest"]'
 				)
 			].map(el => el.parentNode.removeChild(el))
 		}
@@ -231,17 +263,55 @@ export const replaceArticleAndRemoveParts = () => {
 		if ((wp.customize('share_linkedin')() || 'yes') === 'no') {
 			;[
 				...document.querySelectorAll(
-					'.site-main .content-area article [data-share-network="linkedin"]'
+					'.site-main .content-area article [data-network="linkedin"]'
+				)
+			].map(el => el.parentNode.removeChild(el))
+		}
+
+		if ((wp.customize('share_viber')() || 'yes') === 'no') {
+			;[
+				...document.querySelectorAll(
+					'.site-main .content-area article [data-network="viber"]'
+				)
+			].map(el => el.parentNode.removeChild(el))
+		}
+
+		if ((wp.customize('share_reddit')() || 'yes') === 'no') {
+			;[
+				...document.querySelectorAll(
+					'.site-main .content-area article [data-network="reddit"]'
+				)
+			].map(el => el.parentNode.removeChild(el))
+		}
+
+		if ((wp.customize('share_hacker_news')() || 'yes') === 'no') {
+			;[
+				...document.querySelectorAll(
+					'.site-main .content-area article [data-network="hacker_news"]'
+				)
+			].map(el => el.parentNode.removeChild(el))
+		}
+
+		if ((wp.customize('share_whatsapp')() || 'yes') === 'no') {
+			;[
+				...document.querySelectorAll(
+					'.site-main .content-area article [data-network="whatsapp"]'
 				)
 			].map(el => el.parentNode.removeChild(el))
 		}
 
 		;[
 			...document.querySelectorAll(
-				'.site-main .content-area article .share-box'
+				'.site-main .content-area article .ct-share-box'
 			)
 		].map(el => {
-			const count = el.firstElementChild.children.length
+			if (shareBoxType === 'type-1') {
+				if (el.lastElementChild.tagName.toLowerCase() === 'span') {
+					el.lastElementChild.remove()
+				}
+			}
+
+			const count = el.children.length
 
 			if (count === 0) {
 				el.parentNode.removeChild(el)
@@ -251,12 +321,6 @@ export const replaceArticleAndRemoveParts = () => {
 			el.removeAttribute('data-count')
 
 			responsiveClassesFor('share_box_visibility', el)
-
-			if (shareBoxType === 'type-1') {
-				if (el.firstElementChild.tagName.toLowerCase() === 'a') {
-					el.firstElementChild.remove()
-				}
-			}
 
 			if (shareBoxType === 'type-2') {
 				el.dataset.count = count
@@ -419,30 +483,24 @@ export const replaceArticleAndRemoveParts = () => {
 
 	markImagesAsLoaded(document.querySelector('.site-main'))
 }
-
 wp.customize('single_page_hero_section', val =>
 	val.bind(to => replaceArticleAndRemoveParts())
 )
-
 wp.customize('single_blog_post_hero_section', val =>
 	val.bind(to => replaceArticleAndRemoveParts())
 )
-
 wp.customize('has_share_box', val =>
 	val.bind(() => replaceArticleAndRemoveParts())
 )
-
 wp.customize('share_box_visibility', val =>
 	val.bind(() => replaceArticleAndRemoveParts())
 )
-
 wp.customize('has_post_nav_title', val =>
 	val.bind(() => replaceArticleAndRemoveParts())
 )
 wp.customize('has_post_nav_thumb', val =>
 	val.bind(() => replaceArticleAndRemoveParts())
 )
-
 wp.customize('share_box1_location', val =>
 	val.bind(() => replaceArticleAndRemoveParts())
 )
@@ -469,67 +527,57 @@ wp.customize('share_ok', val => val.bind(() => replaceArticleAndRemoveParts()))
 wp.customize('share_telegram', val =>
 	val.bind(() => replaceArticleAndRemoveParts())
 )
+wp.customize('share_viber', val =>
+	val.bind(() => replaceArticleAndRemoveParts())
+)
+
+wp.customize('share_reddit', val =>
+	val.bind(() => replaceArticleAndRemoveParts())
+)
+wp.customize('share_hacker_news', val =>
+	val.bind(() => replaceArticleAndRemoveParts())
+)
+wp.customize('share_whatsapp', val =>
+	val.bind(() => replaceArticleAndRemoveParts())
+)
 wp.customize('has_author_box', val =>
 	val.bind(() => replaceArticleAndRemoveParts())
 )
-
 wp.customize('single_author_box_social', val =>
 	val.bind(() => replaceArticleAndRemoveParts())
 )
-
 wp.customize('author_box_visibility', val =>
 	val.bind(() => replaceArticleAndRemoveParts())
 )
 wp.customize('has_post_nav', val =>
 	val.bind(() => replaceArticleAndRemoveParts())
 )
-
 wp.customize('post_nav_visibility', val =>
 	val.bind(() => replaceArticleAndRemoveParts())
 )
-
 wp.customize('has_post_tags', val =>
 	val.bind(() => replaceArticleAndRemoveParts())
 )
-
 wp.customize('has_featured_image', val =>
 	val.bind(() => replaceArticleAndRemoveParts())
 )
-
 wp.customize('single_featured_image_visibility', val =>
 	val.bind(() => replaceArticleAndRemoveParts())
 )
-
 wp.customize('single_featured_image_width', val =>
 	val.bind(() => replaceArticleAndRemoveParts())
 )
-
 wp.customize('single_featured_image_ratio', val =>
 	val.bind(() => replaceArticleAndRemoveParts())
 )
-
 wp.customize('single_featured_image_location', val =>
 	val.bind(() => replaceArticleAndRemoveParts())
 )
-
 wp.customize('single_content_style', val =>
 	val.bind(to => replaceArticleAndRemoveParts())
 )
-
 wp.customize('single_featured_image_boundless', val =>
 	val.bind(to => replaceArticleAndRemoveParts())
-)
-
-wp.customize('page_content_style', val =>
-	val.bind(to => {
-		const article = document.querySelector(
-			'.page .site-main .content-area article'
-		)
-
-		if (article) {
-			article.dataset.content = to
-		}
-	})
 )
 
 wp.customize('has_post_comments', val =>
@@ -619,28 +667,26 @@ const refreshRelatedPosts = (shouldInsert = true) => {
 		}
 	}
 
-	console.log(
-		document.querySelector('.site-main .ct-related-posts ul').children
-			.length
-	)
-
 	Array.from(
 		new Array(8 - parseInt(wp.customize('related_posts_count')() || 8, 10))
 	).map(
 		() =>
-			document.querySelector('.site-main .ct-related-posts ul').children
-				.length >
+			document.querySelector(
+				'.site-main .ct-related-posts div[data-columns]'
+			).children.length >
 				parseInt(wp.customize('related_posts_count')() || 8, 10) &&
 			document
-				.querySelector('.site-main .ct-related-posts ul')
+				.querySelector('.site-main .ct-related-posts div[data-columns]')
 				.removeChild(
-					document.querySelector('.site-main .ct-related-posts ul')
-						.lastElementChild
+					document.querySelector(
+						'.site-main .ct-related-posts div[data-columns]'
+					).lastElementChild
 				)
 	)
 
-	document.querySelector('.site-main .ct-related-posts ul').dataset.columns =
-		wp.customize('related_posts_columns')() || 3
+	document.querySelector(
+		'.site-main .ct-related-posts div[data-columns]'
+	).dataset.columns = wp.customize('related_posts_columns')() || 3
 
 	document.querySelector(
 		'.site-main .ct-related-posts .ct-related-posts-label'
@@ -722,7 +768,7 @@ const refreshRelatedPosts = (shouldInsert = true) => {
 	)
 	;[
 		...document.querySelectorAll(
-			'.ct-related-posts ul[data-columns] .ct-image-container .ct-ratio'
+			'.ct-related-posts div[data-columns] .ct-image-container .ct-ratio'
 		)
 	].map(el => setRatioFor(wp.customize('related_featured_image_ratio')(), el))
 
@@ -757,9 +803,13 @@ wp.customize('single_author_box_type', val => {
 
 wp.customize('related_posts_columns', val => {
 	val.bind(to => {
-		if (document.querySelector('.site-main .ct-related-posts ul')) {
+		if (
 			document.querySelector(
-				'.site-main .ct-related-posts ul'
+				'.site-main .ct-related-posts div[data-columns]'
+			)
+		) {
+			document.querySelector(
+				'.site-main .ct-related-posts div[data-columns]'
 			).dataset.columns = to
 		}
 	})
@@ -773,8 +823,3 @@ wp.customize('related_label', val => val.bind(() => refreshRelatedPosts()))
 wp.customize('related_featured_image_ratio', val =>
 	val.bind(() => refreshRelatedPosts())
 )
-
-wp.customize('single_page_structure', val =>
-	handleForVal(val, { bodyClass: 'page', class: 'page' })
-)
-wp.customize('single_blog_post_structure', val => handleForVal(val))

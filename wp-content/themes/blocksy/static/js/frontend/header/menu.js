@@ -30,7 +30,7 @@ const getPreferedPlacementFor = el => {
 		: 'right'
 }
 
-export const handleSingleSubmenu = menu => {
+export const handleSingleSubmenu = (menu, preferedPlacement = null) => {
 	;[...menu.querySelectorAll('[data-submenu]')].map(el => {
 		el.removeAttribute('data-submenu')
 	})
@@ -71,7 +71,7 @@ export const handleSingleSubmenu = menu => {
 								placement === 'left' ? 'left' : 'right')
 					}
 				},
-				placement: getPreferedPlacementFor(menu)
+				placement: preferedPlacement || getPreferedPlacementFor(menu)
 			}))
 	)
 }
@@ -89,7 +89,7 @@ export const handleFirstLevelForMenu = menu => {
 				el.classList.contains('page_item_has_children')
 		)
 		.map(el => el.querySelector('.sub-menu'))
-		.map(menu => handleSingleSubmenu(menu))
+		.map(menu => handleSingleSubmenu(menu, 'right'))
 }
 
 export const handleUpdate = menu => {

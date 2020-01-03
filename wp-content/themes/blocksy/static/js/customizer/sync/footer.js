@@ -53,18 +53,3 @@ export const responsiveClassesFor = (data, el) => {
 		el.classList.add('ct-hidden-lg')
 	}
 }
-
-wp.customize('footer_reveal', val =>
-	val.bind(to => {
-		const footer = document.querySelector('.site-footer')
-		footer.removeAttribute('style')
-		footer.removeAttribute('data-footer-reveal')
-
-		if (to !== 'yes') return
-
-		document.body.classList.add('footer-reveal')
-		footer.dataset.footerReveal = 'no'
-
-		ctEvents.trigger('ct:footer-reveal:update')
-	})
-)

@@ -8,8 +8,6 @@ import { onDocumentLoaded, handleEntryPoints } from './helpers'
 import { mountRenderHeaderLoop } from './frontend/header/render-loop'
 import ctEvents from 'ct-events'
 
-document.body.classList.remove('ct-no-js')
-
 maybeMountPerfLogger()
 
 onDocumentLoaded(() => {
@@ -21,7 +19,13 @@ onDocumentLoaded(() => {
 		},
 
 		{
-			els: '[data-share-network]',
+			els: '.flexy-container[data-flexy*="no"]',
+			load: () => import('./frontend/flexy'),
+			events: ['ct:flexy:update']
+		},
+
+		{
+			els: '.ct-share-box [data-network]',
 			load: () => import('./frontend/social-buttons')
 		},
 
@@ -42,9 +46,18 @@ onDocumentLoaded(() => {
 		},
 
 		{
-			els: '[data-footer-reveal]',
+			els: [
+				document.querySelector('footer.site-footer') &&
+				(document.querySelector(
+					'footer.site-footer[data-footer-reveal]'
+				) ||
+					document.querySelector('footer.site-footer')
+						.hasFooterReveal)
+					? [document.querySelector('footer.site-footer')]
+					: []
+			],
 			load: () => import('./frontend/footer-reveal'),
-			events: ['ct:footer-reveal:update']
+			events: ['ct:footer-reveal:update', 'ct:general:device-change']
 		},
 
 		{
@@ -66,7 +79,7 @@ onDocumentLoaded(() => {
 		},
 
 		{
-			els: '.share-box[data-type="type-2"]',
+			els: '.ct-share-box[data-type="type-2"]',
 			load: () => import('./frontend/share-box'),
 			events: ['ct:single:share-box:update']
 		},
@@ -206,6 +219,8 @@ ctEvents.on('ct:overlay:handle-click', ({ e, el, options = {} }) => {
 })
 
 const initOverlayTrigger = () => {
+	const menuToggle = document.querySelector('.mobile-menu-toggle')
+
 	if (document.querySelector('#offcanvas')) {
 		if (!document.querySelector('#offcanvas').hasListener) {
 			document.querySelector('#offcanvas').hasListener = true
@@ -213,37 +228,49 @@ const initOverlayTrigger = () => {
 			document
 				.querySelector('#offcanvas')
 				.addEventListener('click', event => {
+					if (
+						event.target &&
+						event.target.getAttribute('href') &&
+						event.target.getAttribute('href')[0] === '#'
+					) {
+						const menuToggle = document.querySelector(
+							'.mobile-menu-toggle'
+						)
+
+						menuToggle && menuToggle.click()
+					}
+
 					event.stopPropagation()
 				})
 		}
 	}
 
-	document.querySelector('.mobile-menu-toggle') &&
-		document
-			.querySelector('.mobile-menu-toggle')
-			.addEventListener('click', event => {
-				event.preventDefault()
-				event.stopPropagation()
+	if (menuToggle && !menuToggle.hasListener) {
+		menuToggle.hasListener = true
 
-				document
-					.querySelector('.mobile-menu-toggle')
-					.firstElementChild.classList.toggle('close')
+		menuToggle.addEventListener('click', event => {
+			event.preventDefault()
+			event.stopPropagation()
 
-				import('./frontend/overlay').then(({ handleClick }) =>
-					handleClick(event, {
-						container: document.querySelector(
-							document.querySelector('.mobile-menu-toggle').hash
-						),
-						onClose: () =>
-							document.querySelector('.mobile-menu-toggle') &&
-							document
-								.querySelector('.mobile-menu-toggle')
-								.firstElementChild.classList.remove('close')
-					})
-				)
-			})
+			document
+				.querySelector('.mobile-menu-toggle')
+				.firstElementChild.classList.toggle('close')
+
+			import('./frontend/overlay').then(({ handleClick }) =>
+				handleClick(event, {
+					container: document.querySelector(
+						document.querySelector('.mobile-menu-toggle').hash
+					),
+					onClose: () =>
+						document.querySelector('.mobile-menu-toggle') &&
+						document
+							.querySelector('.mobile-menu-toggle')
+							.firstElementChild.classList.remove('close')
+				})
+			)
+		})
+	}
 }
 
 onDocumentLoaded(() => initOverlayTrigger())
-
 ctEvents.on('ct:header:update', () => initOverlayTrigger())

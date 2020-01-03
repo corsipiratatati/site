@@ -158,7 +158,7 @@ handleVariablesFor({
 
 	// Layout
 	maxSiteWidth: {
-		selector: 'body',
+		selector: ':root',
 		variable: 'maxSiteWidth',
 		unit: 'px'
 	},
@@ -170,21 +170,14 @@ handleVariablesFor({
 		unit: ''
 	},
 
-	narrowContainerWidth: [
-		{
-			selector: '[data-page-structure="narrow"]',
-			variable: 'narrowContainerWidth',
-			unit: '%'
-		},
-		{
-			selector: '[data-page-structure="narrow"]',
-			variable: 'narrowContainerWidthNoUnit',
-			unit: ''
-		}
-	],
+	narrowContainerWidth: {
+		selector: ':root',
+		variable: 'narrowContainer',
+		unit: 'px'
+	},
 
 	wideOffset: {
-		selector: '[data-page-structure="narrow"]',
+		selector: ':root',
 		variable: 'wideOffset',
 		unit: 'px'
 	},
@@ -392,14 +385,14 @@ handleVariablesFor({
 
 	// Share Box
 	topShareBoxSpacing: {
-		selector: '.share-box[data-location="top"]',
+		selector: '.ct-share-box[data-location="top"]',
 		variable: 'margin',
 		responsive: true,
 		unit: ''
 	},
 
 	bottomShareBoxSpacing: {
-		selector: '.share-box[data-location="bottom"]',
+		selector: '.ct-share-box[data-location="bottom"]',
 		variable: 'margin',
 		responsive: true,
 		unit: ''
@@ -407,39 +400,39 @@ handleVariablesFor({
 
 	shareItemsIconColor: [
 		{
-			selector: '.share-box[data-type="type-1"]',
+			selector: '.ct-share-box[data-type="type-1"]',
 			variable: 'color',
 			type: 'color:default'
 		},
 
 		{
-			selector: '.share-box[data-type="type-1"]',
+			selector: '.ct-share-box[data-type="type-1"]',
 			variable: 'colorHover',
 			type: 'color:hover'
 		}
 	],
 
 	shareItemsBorder: {
-		selector: '.share-box[data-type="type-1"]',
+		selector: '.ct-share-box[data-type="type-1"]',
 		variable: 'borderColor',
 		type: 'color'
 	},
 
 	shareItemsIcon: {
-		selector: '.share-box[data-type="type-2"]',
+		selector: '.ct-share-box[data-type="type-2"]',
 		variable: 'color',
 		type: 'color'
 	},
 
 	shareItemsBackground: [
 		{
-			selector: '.share-box[data-type="type-2"]',
+			selector: '.ct-share-box[data-type="type-2"]',
 			variable: 'backgroundColor',
 			type: 'color:default'
 		},
 
 		{
-			selector: '.share-box[data-type="type-2"]',
+			selector: '.ct-share-box[data-type="type-2"]',
 			variable: 'backgroundColorHover',
 			type: 'color:hover'
 		}
@@ -719,6 +712,13 @@ handleVariablesFor({
 		selector: '.shop-entry-card',
 		variable: 'backgroundColor',
 		type: 'color'
+	},
+
+	cardProductRadius: {
+		selector: '.shop-entry-card',
+		type: 'spacing',
+		variable: 'borderRadius',
+		responsive: true
 	},
 
 	cardProductShadow: {

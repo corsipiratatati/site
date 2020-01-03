@@ -2,7 +2,7 @@ export const setRatioFor = (ratio, el) => {
 	let thumb_ratio = (ratio || '4/3').split('/')
 
 	el.style.paddingBottom = `${Math.round(
-		parseInt(thumb_ratio[1], 10) / parseInt(thumb_ratio[0], 10) * 100
+		(parseInt(thumb_ratio[1], 10) / parseInt(thumb_ratio[0], 10)) * 100
 	)}%`
 }
 
@@ -94,4 +94,28 @@ export const checkAndReplace = (args = {}) => {
 
 	wp.customize(args.id, val => val.bind(to => render()))
 	args.watch.map(opt => wp.customize(opt, val => val.bind(() => render())))
+}
+
+export const getOptionFor = (key, prefix = '') => {
+	const id = `${prefix}${prefix.length > 0 ? '_' : ''}${key}`
+
+	if (wp.customize(id)) {
+		return wp.customize(id)()
+	}
+
+	return false
+}
+
+export const watchOptionsWithPrefix = (args = {}) => {
+	const {
+		getPrefix = () => null,
+		getOptionsForPrefix = ({ prefix }) => [],
+		render = () => {}
+	} = args
+
+	let prefix = getPrefix()
+
+	getOptionsForPrefix({ prefix }).map(id =>
+		wp.customize(id, val => val.bind(to => render({ prefix })))
+	)
 }

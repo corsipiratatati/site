@@ -1,3 +1,5 @@
+import { getOptionFor } from './helpers'
+
 wp.customize('paginationDivider', val =>
 	val.bind(to =>
 		[...document.querySelectorAll('.ct-pagination')].map(el => {
@@ -27,9 +29,6 @@ export const getPrefixFor = () => {
 
 	return 'blog'
 }
-
-export const getOptionFor = (key, prefix = '') =>
-	wp.customize(`${prefix}${prefix.length > 0 ? '_' : ''}${key}`)()
 
 export const renderPagination = prefix => {
 	if (prefix !== getPrefixFor()) {

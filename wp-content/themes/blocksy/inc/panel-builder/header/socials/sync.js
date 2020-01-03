@@ -23,14 +23,14 @@ ctEvents.on(
 
 			headerSocialsIconColor: [
 				{
-					selector: '.ct-header-socials',
+					selector: '.ct-header-socials [data-color="custom"]',
 					variable: 'color',
 					type: 'color:default',
 					responsive: true
 				},
 
 				{
-					selector: '.ct-header-socials',
+					selector: '.ct-header-socials [data-color="custom"]',
 					variable: 'colorHover',
 					type: 'color:hover',
 					responsive: true
@@ -39,14 +39,14 @@ ctEvents.on(
 
 			headerSocialsIconBackground: [
 				{
-					selector: '.ct-header-socials',
+					selector: '.ct-header-socials [data-color="custom"]',
 					variable: 'backgroundColor',
 					type: 'color:default',
 					responsive: true
 				},
 
 				{
-					selector: '.ct-header-socials',
+					selector: '.ct-header-socials [data-color="custom"]',
 					variable: 'backgroundColorHover',
 					type: 'color:hover',
 					responsive: true
@@ -71,11 +71,34 @@ ctEvents.on(
 
 		if (optionId === 'socialsType' || optionId === 'socialsFillType') {
 			updateAndSaveEl(selector, el => {
-				el.querySelector('.ct-social-box').dataset.icons =
-					values.socialsType === 'simple'
-						? 'simple'
-						: `${values.socialsType}-${values.socialsFillType}`
+				const box = el.querySelector('.ct-social-box')
+				box.dataset.type = values.socialsType
+
+				box.removeAttribute('data-fill')
+
+				if (values.socialsType !== 'simple') {
+					box.dataset.fill = values.socialsFillType
+				}
 			})
+		}
+
+		if (optionId === 'socialsIconSize') {
+			updateAndSaveEl(
+				selector,
+				el =>
+					(el.querySelector('.ct-social-box').dataset.size =
+						values.socialsIconSize)
+			)
+		}
+
+		if (optionId === 'headerSocialsColor') {
+			updateAndSaveEl(
+				selector,
+				el =>
+					(el.querySelector(
+						'.ct-social-box'
+					).dataset.color = optionValue)
+			)
 		}
 
 		if (optionId === 'header_socials') {
@@ -102,16 +125,6 @@ ctEvents.on(
 		if (optionId === 'visibility') {
 			updateAndSaveEl(selector, el =>
 				responsiveClassesFor({ ...optionValue, desktop: true }, el)
-			)
-		}
-
-		if (optionId === 'headerSocialsColor') {
-			updateAndSaveEl(
-				selector,
-				el =>
-					(el.querySelector(
-						'.ct-social-box'
-					).dataset.iconsColor = optionValue)
 			)
 		}
 	}

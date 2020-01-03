@@ -1,180 +1,247 @@
+import { maybePromoteScalarValueIntoResponsive } from 'customizer-sync-helpers/dist/promote-into-responsive'
+
 const componentToHex = c => {
 	var hex = c.toString(16)
 	return hex.length == 1 ? '0' + hex : hex
 }
 
-export const handleBackgroundOptionFor = ({ id, selector }) => ({
+const withResponsive = ({ responsive, value, cb }) => {
+	value = maybePromoteScalarValueIntoResponsive(value, responsive)
+
+	if (responsive) {
+		return {
+			desktop: cb(value.desktop),
+			tablet: cb(value.tablet),
+			mobile: cb(value.mobile)
+		}
+	}
+
+	return cb(value)
+}
+
+export const handleBackgroundOptionFor = ({
+	id,
+	selector,
+	responsive = false
+}) => ({
 	[id]: [
 		{
 			variable: 'backgroundColor',
 			selector,
-			extractValue: value => value.backgroundColor.default.color
+			responsive,
+			extractValue: value =>
+				withResponsive({
+					value,
+					responsive,
+					cb: value => value.backgroundColor.default.color
+				})
 		},
 
 		{
 			variable: 'patternColor',
 			selector,
+			responsive,
 			extractValue: value =>
-				value.background_type === 'pattern'
-					? value.patternColor.default.color
-					: 'CT_CSS_SKIP_RULE'
+				withResponsive({
+					value,
+					responsive,
+					cb: value =>
+						value.background_type === 'pattern'
+							? value.patternColor.default.color
+							: 'CT_CSS_SKIP_RULE'
+				})
 		},
 
 		{
 			variable: 'backgroundImage',
 			selector,
-			extractValue: ({
-				background_type,
-				background_image,
-				background_pattern,
-				patternColor,
-				backgroundColor
-			}) => {
-				if (background_type === 'color') {
-					if (backgroundColor.default.color !== 'CT_CSS_SKIP_RULE') {
-						return 'none'
-					}
+			responsive,
+			extractValue: value =>
+				withResponsive({
+					value,
+					responsive,
+					cb: ({
+						background_type,
+						background_image,
+						background_pattern,
+						patternColor,
+						backgroundColor
+					}) => {
+						if (background_type === 'color') {
+							if (
+								backgroundColor.default.color !==
+								'CT_CSS_SKIP_RULE'
+							) {
+								return 'none'
+							}
 
-					return 'CT_CSS_SKIP_RULE'
-				}
+							return 'CT_CSS_SKIP_RULE'
+						}
 
-				const str_replace = ($old, $new, $text) =>
-					($text + '').split($old).join($new)
+						const str_replace = ($old, $new, $text) =>
+							($text + '').split($old).join($new)
 
-				if (background_type === 'image') {
-					if (!background_image.url) {
-						return 'CT_CSS_SKIP_RULE'
-					}
+						if (background_type === 'image') {
+							if (!background_image.url) {
+								return 'CT_CSS_SKIP_RULE'
+							}
 
-					return `url(${background_image.url})`
-				}
+							return `url(${background_image.url})`
+						}
 
-				let opacity = 1
-				let color = patternColor.default.color
+						let opacity = 1
+						let color = patternColor.default.color
 
-				if (color.indexOf('paletteColor1') > -1) {
-					color = getComputedStyle(document.body).getPropertyValue(
-						'--paletteColor1'
-					)
-				}
+						if (color.indexOf('paletteColor1') > -1) {
+							color = getComputedStyle(
+								document.body
+							).getPropertyValue('--paletteColor1')
+						}
 
-				if (color.indexOf('paletteColor2') > -1) {
-					color = getComputedStyle(document.body).getPropertyValue(
-						'--paletteColor2'
-					)
-				}
+						if (color.indexOf('paletteColor2') > -1) {
+							color = getComputedStyle(
+								document.body
+							).getPropertyValue('--paletteColor2')
+						}
 
-				if (color.indexOf('paletteColor3') > -1) {
-					color = getComputedStyle(document.body).getPropertyValue(
-						'--paletteColor3'
-					)
-				}
+						if (color.indexOf('paletteColor3') > -1) {
+							color = getComputedStyle(
+								document.body
+							).getPropertyValue('--paletteColor3')
+						}
 
-				if (color.indexOf('paletteColor4') > -1) {
-					color = getComputedStyle(document.body).getPropertyValue(
-						'--paletteColor4'
-					)
-				}
+						if (color.indexOf('paletteColor4') > -1) {
+							color = getComputedStyle(
+								document.body
+							).getPropertyValue('--paletteColor4')
+						}
 
-				if (color.indexOf('paletteColor5') > -1) {
-					color = getComputedStyle(document.body).getPropertyValue(
-						'--paletteColor5'
-					)
-				}
+						if (color.indexOf('paletteColor5') > -1) {
+							color = getComputedStyle(
+								document.body
+							).getPropertyValue('--paletteColor5')
+						}
 
-				if (color.indexOf('rgb') > -1) {
-					const rgb_array = str_replace(
-						'rgb(',
-						'',
-						str_replace(
-							')',
-							'',
-							str_replace(
-								'rgba(',
+						if (color.indexOf('rgb') > -1) {
+							const rgb_array = str_replace(
+								'rgb(',
 								'',
-								str_replace(' ', '', color)
+								str_replace(
+									')',
+									'',
+									str_replace(
+										'rgba(',
+										'',
+										str_replace(' ', '', color)
+									)
+								)
+							).split(',')
+
+							color = `#${componentToHex(
+								parseInt(rgb_array[0], 10)
+							)}${componentToHex(
+								parseInt(rgb_array[1], 10)
+							)}${componentToHex(parseInt(rgb_array[2], 10))}`
+
+							if (rgb_array.length > 3) {
+								opacity = rgb_array[3]
+							}
+						}
+
+						color = str_replace('#', '', color)
+
+						return `url("${str_replace(
+							'OPACITY',
+							opacity,
+							str_replace(
+								'COLOR',
+								color,
+								ct_localizations.customizer_sync.svg_patterns[
+									background_pattern
+								] ||
+									ct_localizations.customizer_sync
+										.svg_patterns['type-1']
 							)
-						)
-					).split(',')
-
-					color = `#${componentToHex(
-						parseInt(rgb_array[0], 10)
-					)}${componentToHex(
-						parseInt(rgb_array[1], 10)
-					)}${componentToHex(parseInt(rgb_array[2], 10))}`
-
-					if (rgb_array.length > 3) {
-						opacity = rgb_array[3]
+						)}")`
 					}
-				}
-
-				color = str_replace('#', '', color)
-
-				return `url("${str_replace(
-					'OPACITY',
-					opacity,
-					str_replace(
-						'COLOR',
-						color,
-						ct_localizations.customizer_sync.svg_patterns[
-							background_pattern
-						] ||
-							ct_localizations.customizer_sync.svg_patterns[
-								'type-1'
-							]
-					)
-				)}")`
-			}
+				})
 		},
 
 		{
 			variable: 'backgroundPosition',
 			selector,
-			extractValue: ({ background_type, background_image: { x, y } }) => {
-				if (background_type !== 'image') {
-					return 'CT_CSS_SKIP_RULE'
-				}
+			responsive,
 
-				return `${Math.round(parseFloat(x) * 100)}% ${Math.round(
-					parseFloat(y) * 100
-				)}%`
-			}
+			extractValue: value =>
+				withResponsive({
+					value,
+					responsive,
+					cb: ({ background_type, background_image: { x, y } }) => {
+						if (background_type !== 'image') {
+							return 'CT_CSS_SKIP_RULE'
+						}
+
+						return `${Math.round(
+							parseFloat(x) * 100
+						)}% ${Math.round(parseFloat(y) * 100)}%`
+					}
+				})
 		},
 
 		{
 			variable: 'backgroundSize',
 			selector,
-			extractValue: ({ background_type, background_size }) => {
-				if (background_type !== 'image') {
-					return 'CT_CSS_SKIP_RULE'
-				}
+			responsive,
 
-				return background_size
-			}
+			extractValue: value =>
+				withResponsive({
+					value,
+					responsive,
+					cb: ({ background_type, background_size }) => {
+						if (background_type !== 'image') {
+							return 'CT_CSS_SKIP_RULE'
+						}
+
+						return background_size
+					}
+				})
 		},
 
 		{
 			variable: 'backgroundAttachment',
 			selector,
-			extractValue: ({ background_type, background_attachment }) => {
-				if (background_type !== 'image') {
-					return 'CT_CSS_SKIP_RULE'
-				}
+			responsive,
 
-				return background_attachment
-			}
+			extractValue: value =>
+				withResponsive({
+					value,
+					responsive,
+					cb: ({ background_type, background_attachment }) => {
+						if (background_type !== 'image') {
+							return 'CT_CSS_SKIP_RULE'
+						}
+
+						return background_attachment
+					}
+				})
 		},
 
 		{
 			selector,
 			variable: 'backgroundRepeat',
-			extractValue: ({ background_type, background_repeat }) => {
-				if (background_type !== 'image') {
-					return 'CT_CSS_SKIP_RULE'
-				}
+			responsive,
+			extractValue: value =>
+				withResponsive({
+					value,
+					responsive,
+					cb: ({ background_type, background_repeat }) => {
+						if (background_type !== 'image') {
+							return 'CT_CSS_SKIP_RULE'
+						}
 
-				return background_repeat
-			}
+						return background_repeat
+					}
+				})
 		}
 	]
 })

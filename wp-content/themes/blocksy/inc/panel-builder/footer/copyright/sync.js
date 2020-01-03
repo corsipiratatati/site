@@ -28,7 +28,14 @@ ctEvents.on(
 
 			footerCopyrightAlignment: {
 				selector: '[data-column="copyright"]',
-				variable: 'alignment',
+				variable: 'horizontal-alignment',
+				responsive: true,
+				unit: ''
+			},
+
+			footerCopyrightVerticalAlignment: {
+				selector: '[data-column="copyright"]',
+				variable: 'vertical-alignment',
 				responsive: true,
 				unit: ''
 			},

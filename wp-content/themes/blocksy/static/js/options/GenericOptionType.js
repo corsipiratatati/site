@@ -2,7 +2,8 @@ import { createElement, Fragment, Component } from '@wordpress/element'
 import classnames from 'classnames'
 import ResponsiveControls, {
 	maybePromoteScalarValueIntoResponsive,
-	isOptionEnabledFor
+	isOptionEnabledFor,
+	isOptionResponsiveFor
 } from '../customizer/components/responsive-controls'
 import deepEqual from 'deep-equal'
 import { normalizeCondition, matchValuesWithCondition } from 'match-conditions'
@@ -96,17 +97,22 @@ class GenericOptionType extends Component {
 
 	componentDidMount() {
 		if (this.props.option.type !== 'ct-typography') {
-			if (!this.props.option.responsive) return
+			if (!isOptionResponsiveFor(this.props.option)) {
+				return
+			}
 		}
-		if (!wp.customize) return
 
+		if (!wp.customize) return
 		setTimeout(() => wp.customize.previewedDevice.bind(this.listener), 1000)
 	}
 
 	componentWillUnmount() {
 		if (this.props.option.type !== 'ct-typography') {
-			if (!this.props.option.responsive) return
+			if (!isOptionResponsiveFor(this.props.option)) {
+				return
+			}
 		}
+
 		if (!wp.customize) return
 		wp.customize.previewedDevice.unbind(this.listener)
 	}
@@ -129,9 +135,16 @@ class GenericOptionType extends Component {
 
 		let OptionComponent = getOptionFor(option)
 
-		const valueWithResponsive = option.responsive
-			? maybePromoteScalarValueIntoResponsive(value)[this.state.device]
-			: value
+		const globalResponsiveValue = maybePromoteScalarValueIntoResponsive(
+			value,
+			isOptionResponsiveFor(option)
+		)
+
+		const valueWithResponsive = isOptionResponsiveFor(option, {
+			ignoreHidden: true
+		})
+			? globalResponsiveValue[this.state.device]
+			: globalResponsiveValue
 
 		const onChangeWithMobileBridge = value => {
 			if (
@@ -146,10 +159,13 @@ class GenericOptionType extends Component {
 		}
 
 		const onChangeWithResponsiveBridge = scalarValue => {
-			const responsiveValue = maybePromoteScalarValueIntoResponsive(value)
+			const responsiveValue = maybePromoteScalarValueIntoResponsive(
+				value,
+				isOptionResponsiveFor(option)
+			)
 
 			onChangeWithMobileBridge(
-				option.responsive
+				isOptionResponsiveFor(option, { ignoreHidden: true })
 					? {
 							...responsiveValue,
 							[this.state.device]: scalarValue,
@@ -275,11 +291,16 @@ class GenericOptionType extends Component {
 				{...{
 					option: {
 						...option,
-						value: option.responsive
+						value: isOptionResponsiveFor(option, {
+							ignoreHidden: true
+						})
 							? maybePromoteScalarValueIntoResponsive(
 									option.value || ''
 							  )[this.state.device]
-							: option.value || ''
+							: maybePromoteScalarValueIntoResponsive(
+									option.value || '',
+									isOptionResponsiveFor(option)
+							  )
 					},
 					value: valueWithResponsive,
 					id,
@@ -315,12 +336,12 @@ class GenericOptionType extends Component {
 				<section>
 					{maybeLabel && <label>{maybeLabel}</label>}
 
-					{((option.responsive &&
+					{((isOptionResponsiveFor(option) &&
 						isOptionEnabledFor(
 							this.state.device,
 							option.responsive
 						)) ||
-						!option.responsive) &&
+						!isOptionResponsiveFor(option)) &&
 						OptionComponentWithoutDesign}
 				</section>
 			)
@@ -336,7 +357,7 @@ class GenericOptionType extends Component {
 				data-design={actualDesignType}
 				{...(option.divider ? { 'data-divider': option.divider } : {})}
 				{...{
-					...((option.responsive &&
+					...((isOptionResponsiveFor(option) &&
 						!isOptionEnabledFor(
 							this.state.device,
 							option.responsive
@@ -377,16 +398,17 @@ class GenericOptionType extends Component {
 						}}
 					/>
 
-					{option.responsive && actualDesignType === 'block' && (
-						<ResponsiveControls
-							device={this.state.device}
-							responsiveDescriptor={option.responsive}
-							setDevice={device => this.setDevice(device)}
-						/>
-					)}
+					{isOptionResponsiveFor(option, { ignoreHidden: true }) &&
+						actualDesignType.indexOf('block') > -1 && (
+							<ResponsiveControls
+								device={this.state.device}
+								responsiveDescriptor={option.responsive}
+								setDevice={device => this.setDevice(device)}
+							/>
+						)}
 				</header>
 
-				{option.responsive &&
+				{isOptionResponsiveFor(option) &&
 					!isOptionEnabledFor(
 						this.state.device,
 						option.responsive
@@ -400,15 +422,15 @@ class GenericOptionType extends Component {
 						</div>
 					)}
 
-				{((option.responsive &&
+				{((isOptionResponsiveFor(option) &&
 					isOptionEnabledFor(this.state.device, option.responsive)) ||
-					!option.responsive) && (
+					!isOptionResponsiveFor(option)) && (
 					<Fragment>
 						<section
 							className={classnames(
 								{
 									'ct-responsive-container':
-										option.responsive &&
+										isOptionResponsiveFor(option) &&
 										actualDesignType === 'inline'
 								},
 								sectionClassName({
@@ -416,7 +438,9 @@ class GenericOptionType extends Component {
 									option
 								})
 							)}>
-							{option.responsive &&
+							{isOptionResponsiveFor(option, {
+								ignoreHidden: true
+							}) &&
 								actualDesignType === 'inline' && (
 									<ResponsiveControls
 										device={this.state.device}

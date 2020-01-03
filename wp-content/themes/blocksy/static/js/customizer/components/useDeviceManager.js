@@ -21,7 +21,9 @@ export const useDeviceManagerActions = () => {
 	return context || {}
 }
 
-export const useDeviceManager = () => {
+export const useDeviceManager = (args = {}) => {
+	const { withTablet = true } = args
+
 	const [currentView, setCurrentView] = useState(
 		wp.customize && wp.customize.previewedDevice
 			? wp.customize.previewedDevice()
@@ -31,9 +33,7 @@ export const useDeviceManager = () => {
 	const listener = () => {
 		setCurrentView(
 			wp.customize && wp.customize.previewedDevice
-				? wp.customize.previewedDevice() === 'desktop'
-					? 'desktop'
-					: 'mobile'
+				? wp.customize.previewedDevice()
 				: 'desktop'
 		)
 	}
@@ -49,7 +49,11 @@ export const useDeviceManager = () => {
 	}, [])
 
 	return [
-		currentView,
+		withTablet
+			? currentView
+			: currentView === 'tablet'
+			? 'mobile'
+			: currentView,
 		device => {
 			setCurrentView(device)
 			wp.customize && wp.customize.previewedDevice.set(device)

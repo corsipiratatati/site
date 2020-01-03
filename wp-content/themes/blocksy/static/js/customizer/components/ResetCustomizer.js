@@ -10,13 +10,15 @@ const ResetCustomizer = () => {
 	const [isShowing, setIsShowing] = useState(false)
 
 	return (
-		<a
-			className="ct-revert"
-			onClick={e => {
-				e.preventDefault()
+		<Fragment>
+			<button
+				className="ct-revert"
+				onClick={e => {
+					e.preventDefault()
 
-				setIsShowing(true)
-			}}>
+					setIsShowing(true)
+				}}></button>
+
 			<Overlay
 				items={isShowing}
 				className="ct-customizer-reset-modal"
@@ -67,7 +69,7 @@ const ResetCustomizer = () => {
 					</div>
 				)}
 			/>
-		</a>
+		</Fragment>
 	)
 }
 

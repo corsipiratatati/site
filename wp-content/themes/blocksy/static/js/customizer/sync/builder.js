@@ -219,7 +219,57 @@ wp.customize.bind('preview-ready', () => {
 
 	wp.customize.preview.bind(
 		'ct:header:receive-value-update:all-items',
-		({ items, oldItems }) => {
+		({ section, oldSection }) => {
+			const { items, settings } = section
+			const { items: oldItems, settings: oldSettings } = oldSection
+
+			const diffedHeaderValues = getValueFromInput(
+				ct_customizer_localizations.header_builder_data.header_data
+					.header_options,
+				{},
+				(id, option) => {
+					const newValues = (settings ? settings : null) || {}
+					const oldValues = (oldSettings ? oldSettings : null) || {}
+
+					if (
+						Object.keys(newValues).indexOf(id) === -1 &&
+						Object.keys(oldValues).indexOf(id) === -1
+					) {
+						return {}
+					}
+
+					if (
+						compare(
+							newValues[id] || option.value,
+							oldValues[id] || option.value
+						)
+					) {
+						return {}
+					}
+
+					return { [id]: newValues[id] || option.value }
+				}
+			)
+
+			Object.keys(diffedHeaderValues).map(optionId => {
+				if (!headerVariableDescriptors.global) {
+					return
+				}
+
+				const descriptor = headerVariableDescriptors.global[optionId]
+
+				if (!descriptor) {
+					return
+				}
+
+				;(Array.isArray(descriptor)
+					? descriptor
+					: [descriptor]
+				).map(d =>
+					handleSingleVariableFor(d, diffedHeaderValues[optionId])
+				)
+			})
+
 			ct_customizer_localizations.header_builder_data.header.map(
 				({ id: itemId, options }) => {
 					const actualItem = items.find(({ id }) => id === itemId)
@@ -330,9 +380,11 @@ wp.customize.bind('preview-ready', () => {
 					return
 				}
 
-				;(Array.isArray(descriptor) ? descriptor : [descriptor]).map(
-					d =>
-						handleSingleVariableFor(d, diffedFooterValues[optionId])
+				;(Array.isArray(descriptor)
+					? descriptor
+					: [descriptor]
+				).map(d =>
+					handleSingleVariableFor(d, diffedFooterValues[optionId])
 				)
 			})
 

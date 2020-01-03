@@ -17,7 +17,7 @@ const SecondaryItems = ({
 	inlinedItemsFromBuilder,
 	displayList = true
 }) => {
-	const { panelsState, panelsActions, currentView } = useContext(
+	const { panelsState, panelsActions, currentView, isDragging } = useContext(
 		DragDropContext
 	)
 
@@ -45,6 +45,7 @@ const SecondaryItems = ({
 			items={secondaryItems.map(({ id }) => id)}
 			hasPointers={false}
 			panelType="footer"
+			displayWrapper={displayList}
 			propsForItem={item => ({
 				renderItem: ({ item, itemData }) => {
 					const itemOptions = allItems.find(({ id }) => id === item)
@@ -133,9 +134,12 @@ const SecondaryItems = ({
 												'ct-item-in-builder': itemInBuilder,
 												'ct-builder-item': !itemInBuilder
 											})}
-											onClick={() =>
+											onClick={() => {
+												if (isDragging) {
+													return
+												}
 												itemInBuilder && open()
-											}>
+											}}>
 											{itemData.config.name}
 										</div>
 									)}

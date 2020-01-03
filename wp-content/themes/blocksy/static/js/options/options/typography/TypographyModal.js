@@ -111,9 +111,10 @@ const TypographyModal = ({
 	const linearFontsList = Object.keys(typographyList).reduce(
 		(currentList, currentSource) => [
 			...currentList,
-			...(typographyList[currentSource].families || []).filter(
-				({ family }) =>
-					fuzzysearch(searchTerm.toLowerCase(), family.toLowerCase())
+			...(
+				typographyList[currentSource].families || []
+			).filter(({ family }) =>
+				fuzzysearch(searchTerm.toLowerCase(), family.toLowerCase())
 			)
 		],
 		[]

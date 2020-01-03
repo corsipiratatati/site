@@ -10,17 +10,25 @@ const Home = () => {
 		child_download_link
 	} = useContext(DashboardContext)
 
+	let beforeContent = { content: null }
+
+	ctEvents.trigger('ct:dashboard:home:before', beforeContent)
+
 	return (
 		<section>
-			<div className="ct-welcome-message">
-				<h2>{__('Welcome Aboard!', 'blocksy')}</h2>
-				<p>
-					{__(
-						`Thank you for choosing Blocksy and for joining the CreativeThemes community.`,
-						'blocksy'
-					)}
-				</p>
-			</div>
+			{!beforeContent.content && (
+				<div className="ct-welcome-message">
+					<h2>{__('Welcome Aboard!', 'blocksy')}</h2>
+					<p>
+						{__(
+							`Thank you for choosing Blocksy and for joining the CreativeThemes community.`,
+							'blocksy'
+						)}
+					</p>
+				</div>
+			)}
+
+			{beforeContent.content}
 
 			<div className="ct-first-steps-container">
 				<h2>{__('Getting Started', 'blocksy')}</h2>

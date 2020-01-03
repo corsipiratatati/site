@@ -1,7 +1,7 @@
 import { handleBackgroundOptionFor } from '../../../../static/js/customizer/sync/variables/background'
 import ctEvents from 'ct-events'
 import { updateAndSaveEl } from '../../../../static/js/frontend/header/render-loop'
-import { maybePromoteScalarValueIntoResponsive } from '../../../../static/js/customizer/components/responsive-controls'
+import { maybePromoteScalarValueIntoResponsive } from 'customizer-sync-helpers/dist/promote-into-responsive'
 
 export const handleRowVariables = ({ selector }) => ({
 	headerRowHeight: {
@@ -20,18 +20,19 @@ export const handleRowVariables = ({ selector }) => ({
 
 	...handleBackgroundOptionFor({
 		id: 'headerRowBackground',
-		selector
+		selector,
+		responsive: true
 	}),
 
 	headerRowTopBorder: {
-		selector: `${selector}[data-border]:before`,
+		selector: `${selector} > [data-border]:before`,
 		variable: 'border',
 		type: 'border',
 		responsive: true
 	},
 
 	headerRowBottomBorder: {
-		selector: `${selector}[data-border]:after`,
+		selector: `${selector} > [data-border]:after`,
 		variable: 'border',
 		type: 'border',
 		responsive: true
@@ -48,7 +49,7 @@ const updateBorderFor = (
 	}
 ) => {
 	updateAndSaveEl(selector, el => {
-		el.removeAttribute('data-border')
+		el.firstElementChild.removeAttribute('data-border')
 
 		const top = maybePromoteScalarValueIntoResponsive(headerRowTopBorder)
 		const bottom = maybePromoteScalarValueIntoResponsive(
@@ -80,7 +81,7 @@ const updateBorderFor = (
 		}
 
 		if (borderAttrs.length > 0) {
-			el.dataset.border = borderAttrs.join(':')
+			el.firstElementChild.dataset.border = borderAttrs.join(':')
 		}
 	})
 }
@@ -122,5 +123,8 @@ ctEvents.on(
 )
 
 ctEvents.on('ct:header:sync:item:middle-row', changeDescriptor =>
-	handleRowOptions({ selector: 'header [data-row="middle"]', changeDescriptor })
+	handleRowOptions({
+		selector: '[data-row="middle"]',
+		changeDescriptor
+	})
 )

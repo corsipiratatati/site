@@ -11,5 +11,5 @@ ctEvents.on(
 )
 
 ctEvents.on('ct:header:sync:item:top-row', changeDescriptor =>
-	handleRowOptions({ selector: 'header [data-row="top"]', changeDescriptor })
+	handleRowOptions({ selector: '[data-row="top"]', changeDescriptor })
 )

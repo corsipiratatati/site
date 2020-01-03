@@ -6,7 +6,7 @@ import {
 	Fragment
 } from '@wordpress/element'
 import DraggableItems from '../DraggableItems'
-import { DragDropContext } from '../../../../options/options/ct-header-builder'
+import { DragDropContext } from '../BuilderRoot'
 import cls from 'classnames'
 import Panel, { PanelMetaWrapper } from '../../../../options/options/ct-panel'
 import { getValueFromInput } from '../../../../options/helpers/get-value-from-input'
@@ -14,9 +14,10 @@ import { getValueFromInput } from '../../../../options/helpers/get-value-from-in
 const SecondaryItems = ({
 	builderValue,
 	builderValueDispatch,
-	inlinedItemsFromBuilder
+	inlinedItemsFromBuilder,
+	displayList = true
 }) => {
-	const { panelsState, panelsActions, currentView } = useContext(
+	const { panelsState, panelsActions, currentView, isDragging } = useContext(
 		DragDropContext
 	)
 
@@ -62,6 +63,7 @@ const SecondaryItems = ({
 			draggableId={'available-items'}
 			items={secondaryItems.map(({ id }) => id)}
 			hasPointers={false}
+			displayWrapper={displayList}
 			propsForItem={item => ({
 				renderItem: ({ item, itemData }) => {
 					const itemOptions = allItems.find(({ id }) => id === item)
@@ -82,7 +84,7 @@ const SecondaryItems = ({
 							id={id}
 							option={option}
 							{...panelsActions}
-							getActualOption={({ open, container }) => (
+							getActualOption={({ open }) => (
 								<Fragment>
 									{inlinedItemsFromAllViewsBuilder.indexOf(
 										item
@@ -146,20 +148,24 @@ const SecondaryItems = ({
 
 									{itemData.config.devices.indexOf(
 										currentView
-									) > -1 && (
-										<div
-											ref={container}
-											data-id={item}
-											className={cls({
-												'ct-item-in-builder': itemInBuilder,
-												'ct-builder-item': !itemInBuilder
-											})}
-											onClick={() =>
-												itemInBuilder && open()
-											}>
-											{itemData.config.name}
-										</div>
-									)}
+									) > -1 &&
+										displayList && (
+											<div
+												data-id={item}
+												className={cls({
+													'ct-item-in-builder': itemInBuilder,
+													'ct-builder-item': !itemInBuilder
+												})}
+												onClick={e => {
+													if (isDragging) {
+														return
+													}
+
+													itemInBuilder && open()
+												}}>
+												{itemData.config.name}
+											</div>
+										)}
 								</Fragment>
 							)}></PanelMetaWrapper>
 					)

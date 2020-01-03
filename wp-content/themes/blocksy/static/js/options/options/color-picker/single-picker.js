@@ -80,7 +80,7 @@ const SinglePicker = ({
 						onPickingChange(futureIsPicking)
 					}}
 					style={
-						(value || {}).color.indexOf(
+						((value || {}).color || '').indexOf(
 							getNoColorPropFor(option)
 						) === -1
 							? {

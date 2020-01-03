@@ -120,12 +120,11 @@ const PanelLevel = ({ id, children, containerRef }) => {
 						(panelsState.isTransitioning &&
 							panelId === panelsState.isTransitioning),
 
-					open: panelId => {
+					open: panelId =>
 						panelsDispatch({
 							type: 'PANEL_OPEN',
 							payload: { panelId }
-						})
-					},
+						}),
 					close: () => {
 						panelsDispatch({
 							type: 'PANEL_CLOSE'

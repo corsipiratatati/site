@@ -27,7 +27,13 @@ const Select = ({
 
 	return (
 		<Downshift
-			selectedItem={value}
+			selectedItem={
+				value
+					? value
+					: parseInt(value, 10) === 0
+					? value
+					: orderedChoices[0].value
+			}
 			onChange={selection => onChange(selection)}
 			itemToString={item =>
 				item && orderedChoices.find(({ key }) => key === item)
@@ -43,13 +49,14 @@ const Select = ({
 				inputValue,
 				highlightedIndex,
 				selectedItem,
-				openMenu
+				openMenu,
+				toggleMenu
 			}) => (
 				<div className="ct-select-input">
 					<input
 						{...getInputProps({
-							onFocus: () => openMenu(),
-							onClick: () => openMenu()
+							// onFocus: () => openMenu(),
+							onClick: () => toggleMenu()
 						})}
 						placeholder={placeholder || 'Select value...'}
 						readOnly

@@ -17,6 +17,13 @@ export const handleMenuVariables = ({ selector }) => ({
 		unit: ''
 	},
 
+	footerMenuVerticalAlignment: {
+		selector: '[data-column="menu"]',
+		variable: 'vertical-alignment',
+		responsive: true,
+		unit: ''
+	},
+
 	...typographyOption({
 		id: 'footerMenuFont',
 		selector: `${selector} ul`

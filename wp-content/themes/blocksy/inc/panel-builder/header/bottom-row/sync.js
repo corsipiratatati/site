@@ -11,5 +11,5 @@ ctEvents.on(
 )
 
 ctEvents.on('ct:header:sync:item:bottom-row', changeDescriptor =>
-	handleRowOptions({ selector: 'header [data-row="bottom"]', changeDescriptor })
+	handleRowOptions({ selector: '[data-row="bottom"]', changeDescriptor })
 )

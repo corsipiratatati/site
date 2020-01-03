@@ -1,5 +1,5 @@
 const render = () => {
-	const shareBox = document.querySelector('.share-box[data-type="type-2"]')
+	const shareBox = document.querySelector('.ct-share-box[data-type="type-2"]')
 
 	if (!shareBox) {
 		return

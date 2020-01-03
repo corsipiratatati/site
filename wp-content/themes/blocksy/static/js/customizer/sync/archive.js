@@ -1,6 +1,5 @@
-import { getCache } from './helpers'
+import { getCache, getOptionFor } from './helpers'
 import { renderSidebar, renderSidebarPosition } from './sidebar-helpers'
-import { getOptionFor } from './hero-section'
 import { renderSidebar as renderSidebarOpts } from './sidebar'
 
 export const getPrefixFor = () => {

@@ -17,10 +17,6 @@ class ColorPicker extends Component {
 		/>
 	)
 
-	static sectionClassName = ({ design }) => ({
-		'ct-responsive-color': design === 'block'
-	})
-
 	state = {
 		isPicking: null,
 		isTransitioning: null

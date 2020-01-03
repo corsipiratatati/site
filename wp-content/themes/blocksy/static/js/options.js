@@ -16,3 +16,6 @@ document.addEventListener('DOMContentLoaded', () => {
 		...document.querySelectorAll('[data-dismiss]')
 	].map(el => import('./notification/main').then(({ mount }) => mount(el)))
 })
+
+export { getValueFromInput } from './options/helpers/get-value-from-input'
+export { default as OptionsPanel } from './options/OptionsPanel'

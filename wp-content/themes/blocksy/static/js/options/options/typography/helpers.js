@@ -17,10 +17,15 @@ export const findSourceTypeFor = (font_family, fonts_list) => {
 	return source.type
 }
 
-export const findSelectedFontFamily = (font_family, fonts_list) =>
-	findSourceTypeSettingsFor(font_family, fonts_list).families.find(
-		({ family }) => family === font_family
-	)
+export const findSelectedFontFamily = (font_family, fonts_list) => {
+	let source = findSourceTypeSettingsFor(font_family, fonts_list)
+
+	if (!source) {
+		return null
+	}
+
+	return source.families.find(({ family }) => family === font_family)
+}
 
 export const decideVariationToSelect = (newValue, oldValue) => {
 	if (newValue.all_variations.indexOf(oldValue.variation) > -1) {

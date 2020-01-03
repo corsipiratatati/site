@@ -87,51 +87,6 @@ export const mount = () => {
 
 	renderPhotoswipe()
 
-	const renderFlexy = () =>
-		[
-			...document.querySelectorAll('.flexy-container[data-flexy*="no"]')
-		].map(sliderEl => {
-			sliderEl = sliderEl.parentNode
-
-			const inst = new Flexy(sliderEl.querySelector('.flexy-items'), {
-				flexyAttributeEl: sliderEl.querySelector('.flexy-container'),
-				elementsThatDoNotStartDrag: ['.twentytwenty-handle'],
-
-				/*
-				autoplay:
-					Object.keys(
-						el.querySelector('.flexy-container').dataset
-					).indexOf('autoplay') > -1 &&
-					parseInt(
-						el.querySelector('.flexy-container').dataset.autoplay,
-						10
-					)
-						? el.querySelector('.flexy-container').dataset.autoplay
-						: false,
-*/
-
-				pillsContainerSelector: sliderEl.querySelector('.flexy-pills'),
-				// leftArrow: sliderEl.querySelector('.flexy-arrow-prev'),
-				// rightArrow: sliderEl.querySelector('.flexy-arrow-next'),
-				scaleRotateEffect: false,
-
-				// viewport | container
-				wrapAroundMode:
-					sliderEl.querySelector('.flexy-container').dataset.wrap ===
-					'viewport'
-						? 'viewport'
-						: 'container'
-			})
-
-			sliderEl.flexy = inst
-		})
-
-	renderFlexy()
-
-	ctEvents.on('ct:flexy:update', () => {
-		renderFlexy()
-	})
-
 	if ($ && $.fn) {
 		if ($.fn.wc_variations_image_update) {
 			const old = $.fn.wc_variations_image_update

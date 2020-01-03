@@ -23,13 +23,29 @@ ctEvents.on(
 ctEvents.on('ct:footer:sync:item:global', changeDescriptor => {
 	if (changeDescriptor.optionId === 'has_reveal_effect') {
 		const footer = document.querySelector('.site-footer')
-		footer.removeAttribute('style')
-		footer.removeAttribute('data-footer-reveal')
 
-		if (changeDescriptor.optionValue !== 'yes') return
+		let revealComponents = []
 
-		document.body.classList.add('footer-reveal')
-		footer.dataset.footerReveal = 'no'
+		if (changeDescriptor.optionValue.desktop) {
+			revealComponents.push('desktop')
+		}
+
+		if (changeDescriptor.optionValue.tablet) {
+			revealComponents.push('tablet')
+		}
+
+		if (changeDescriptor.optionValue.mobile) {
+			revealComponents.push('mobile')
+		}
+
+		if (revealComponents.length === 0) {
+			footer.removeAttribute('style')
+			footer.removeAttribute('data-footer-reveal')
+			footer.hasFooterReveal = null
+		} else {
+			footer.dataset.footerReveal = revealComponents.join(':')
+			footer.hasFooterReveal = null
+		}
 
 		ctEvents.trigger('ct:footer-reveal:update')
 	}

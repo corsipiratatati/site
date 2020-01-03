@@ -1,5 +1,5 @@
 import { markImagesAsLoaded } from '../../frontend/lazy-load-helpers'
-import { getCache } from './helpers'
+import { getCache, getOptionFor } from './helpers'
 import { typographyOption } from './variables/typography'
 import { responsiveClassesFor } from './footer'
 import date from '@wordpress/date'
@@ -101,16 +101,6 @@ const getEnabledKey = () => {
 	return false
 }
 
-export const getOptionFor = (key, prefix = '') => {
-	const id = `${prefix}${prefix.length > 0 ? '_' : ''}${key}`
-
-	if (wp.customize(id)) {
-		return wp.customize(id)()
-	}
-
-	return false
-}
-
 export const renderHeroSection = prefix => {
 	if (prefix !== getPrefixFor()) {
 		return
@@ -164,10 +154,10 @@ export const renderHeroSection = prefix => {
 				document
 					.querySelector('article .entry-content')
 					.parentNode.firstElementChild.classList.contains(
-						'share-box'
+						'ct-share-box'
 					)
 			) {
-				type1Selector = 'article .share-box:first-child'
+				type1Selector = 'article .ct-share-box:first-child'
 			}
 		}
 

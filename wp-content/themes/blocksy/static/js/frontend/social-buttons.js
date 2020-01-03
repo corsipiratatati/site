@@ -7,7 +7,7 @@ export const mount = el =>
 			navigator.userAgent
 		)
 
-		if (el.dataset.shareNetwork === 'pinterest') {
+		if (el.dataset.network === 'pinterest') {
 			e.preventDefault()
 			if (window.PinUtils) {
 				window.PinUtils.pinAny()
@@ -34,7 +34,7 @@ export const mount = el =>
 
 		e.preventDefault()
 
-		const url = el.querySelector('a').href
+		const url = el.href
 		const title = ''
 		const w = 600
 		const h = 500

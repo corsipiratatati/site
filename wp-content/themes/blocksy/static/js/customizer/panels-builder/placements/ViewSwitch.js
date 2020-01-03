@@ -7,9 +7,9 @@ const ViewSwitch = ({ currentView, setCurrentView }) => {
 
 	useEffect(() => {
 		return () => {
-						document
-							.querySelector('.wp-full-overlay')
-							.classList.remove('ct-builder-collapsed')
+			document
+				.querySelector('.wp-full-overlay')
+				.classList.remove('ct-builder-collapsed')
 		}
 	}, [])
 

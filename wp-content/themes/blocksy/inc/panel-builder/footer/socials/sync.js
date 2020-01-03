@@ -23,21 +23,28 @@ ctEvents.on(
 
 			footerSocialsAlignment: {
 				selector: '[data-column="socials"]',
-				variable: 'alignment',
+				variable: 'horizontal-alignment',
+				responsive: true,
+				unit: ''
+			},
+
+			footerSocialsVerticalAlignment: {
+				selector: '[data-column="socials"]',
+				variable: 'vertical-alignment',
 				responsive: true,
 				unit: ''
 			},
 
 			footerSocialsIconColor: [
 				{
-					selector: '.ct-footer-socials',
+					selector: '.ct-footer-socials [data-color="custom"]',
 					variable: 'color',
 					type: 'color:default',
 					responsive: true
 				},
 
 				{
-					selector: '.ct-footer-socials',
+					selector: '.ct-footer-socials [data-color="custom"]',
 					variable: 'colorHover',
 					type: 'color:hover',
 					responsive: true
@@ -46,14 +53,14 @@ ctEvents.on(
 
 			footerSocialsIconBackground: [
 				{
-					selector: '.ct-footer-socials',
+					selector: '.ct-footer-socials [data-color="custom"]',
 					variable: 'backgroundColor',
 					type: 'color:default',
 					responsive: true
 				},
 
 				{
-					selector: '.ct-footer-socials',
+					selector: '.ct-footer-socials [data-color="custom"]',
 					variable: 'backgroundColorHover',
 					type: 'color:hover',
 					responsive: true
@@ -79,10 +86,23 @@ ctEvents.on(
 		const el = document.querySelector(selector).firstElementChild
 
 		if (optionId === 'socialsType' || optionId === 'socialsFillType') {
-			el.querySelector('.ct-social-box').dataset.icons =
-				values.socialsType === 'simple'
-					? 'simple'
-					: `${values.socialsType}-${values.socialsFillType}`
+			const box = el.querySelector('.ct-social-box')
+			box.dataset.type = values.socialsType
+
+			box.removeAttribute('data-fill')
+
+			if (values.socialsType !== 'simple') {
+				box.dataset.fill = values.socialsFillType || 'solid'
+			}
+		}
+
+		if (optionId === 'socialsIconSize') {
+			el.querySelector('.ct-social-box').dataset.size =
+				values.socialsIconSize
+		}
+
+		if (optionId === 'footerSocialsColor') {
+			el.querySelector('.ct-social-box').dataset.color = optionValue
 		}
 
 		if (optionId === 'footer_socials') {
@@ -102,10 +122,6 @@ ctEvents.on(
 					cache.querySelector(`[data-network=${id}]`)
 				)
 			})
-		}
-
-		if (optionId === 'footerSocialsColor') {
-			el.querySelector('.ct-social-box').dataset.iconsColor = optionValue
 		}
 	}
 )

@@ -5,10 +5,15 @@ import { Link } from '@reach/router'
 
 const Navigation = () => {
 	const userNavigationLinks = []
+	const endUserNavigationLinks = []
 
 	const { theme_version } = useContext(DashboardContext)
 
 	ctEvents.trigger('ct:dashboard:navigation-links', userNavigationLinks)
+	ctEvents.trigger(
+		'ct:dashboard:end-navigation-links',
+		endUserNavigationLinks
+	)
 
 	return (
 		<ul className="dashboard-navigation">
@@ -36,6 +41,14 @@ const Navigation = () => {
 					<span className="ct-version">{theme_version}</span>
 				</Link>
 			</li>
+
+			{endUserNavigationLinks.map(({ path, text, ...props }) => (
+				<li key={path}>
+					<Link to={path} {...props}>
+						{text}
+					</Link>
+				</li>
+			))}
 		</ul>
 	)
 }
