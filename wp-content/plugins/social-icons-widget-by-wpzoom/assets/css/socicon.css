@@ -1,10 +1,10 @@
 @font-face {
     font-family: 'socicon';
-    src:  url('https://selfpublishingschool.it/wp-content/plugins/social-icons-widget-by-wpzoom/assets/font/socicon.eot');
-    src:  url('https://selfpublishingschool.it/wp-content/plugins/social-icons-widget-by-wpzoom/assets/font/socicon.eot') format('embedded-opentype'),
-      url('https://selfpublishingschool.it/wp-content/plugins/social-icons-widget-by-wpzoom/assets/font/socicon.ttf') format('truetype'),
-      url('https://selfpublishingschool.it/wp-content/plugins/social-icons-widget-by-wpzoom/assets/font/socicon.woff') format('woff'),
-      url('https://selfpublishingschool.it/wp-content/plugins/social-icons-widget-by-wpzoom/assets/font/socicon.svg') format('svg');
+    src:  url('https://corsipiratati.com/wp-content/plugins/social-icons-widget-by-wpzoom/assets/font/socicon.eot');
+    src:  url('https://corsipiratati.com/wp-content/plugins/social-icons-widget-by-wpzoom/assets/font/socicon.eot') format('embedded-opentype'),
+      url('https://corsipiratati.com/wp-content/plugins/social-icons-widget-by-wpzoom/assets/font/socicon.ttf') format('truetype'),
+      url('https://corsipiratati.com/wp-content/plugins/social-icons-widget-by-wpzoom/assets/font/socicon.woff') format('woff'),
+      url('https://corsipiratati.com/wp-content/plugins/social-icons-widget-by-wpzoom/assets/font/socicon.svg') format('svg');
     font-weight: normal;
     font-style: normal;
     text-transform: initial;
@@ -45,6 +45,15 @@
 
 .socicon-airbnb:before {
     content: "\e00e"
+}
+
+.socicon-anchor {
+    background-color: #8940fa;
+    color: #8940fa;
+}
+
+.socicon-anchor:before {
+    content: "\e91e"
 }
 
 .socicon-android {
@@ -279,6 +288,15 @@
 
 .socicon-disqus:before {
     content: "\e019"
+}
+
+.socicon-displate {
+    background-color: #000;
+    color: #000;
+}
+
+.socicon-displate:before {
+    content: "\e91d"
 }
 
 .socicon-dribbble {
@@ -727,7 +745,7 @@
 }
 
 .socicon-patreon:before {
-    content: "\e01c"
+    content: "\e05f"
 }
 
 .socicon-paypal {
@@ -764,6 +782,15 @@
 
 .socicon-pinterest:before {
     content: "\e043"
+}
+
+.socicon-pixiv {
+    background-color: #049CFF;
+    color: #049CFF;
+}
+
+.socicon-pixiv:before {
+    content: "\e94f"
 }
 
 .socicon-play {
@@ -899,6 +926,15 @@
 
 .socicon-spotify:before {
     content: "\e04e"
+}
+
+.socicon-ssrn {
+    background-color: #063a73;
+    color: #063a73;
+}
+
+.socicon-ssrn:before {
+    content: "\e921"
 }
 
 .socicon-stackoverflow {
@@ -1244,6 +1280,24 @@
 
 .socicon-youtube:before {
     content: "\e051"
+}
+
+.socicon-yummly {
+    background-color: #e16220;
+    color: #e16220;
+}
+
+.socicon-yummly:before {
+    content: "\e920"
+}
+
+.socicon-zazzle {
+    background-color: #9DBC7A;
+    color: #9DBC7A;
+}
+
+.socicon-zazzle:before {
+    content: "\e97b"
 }
 
 .socicon-zerply {
